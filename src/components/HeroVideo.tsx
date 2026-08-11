@@ -16,6 +16,7 @@ export function HeroVideo() {
   const video = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(true);
   const [ready, setReady] = useState(false);
+  const userPaused = useRef(false);
 
   useEffect(() => {
     const el = video.current;
@@ -30,18 +31,66 @@ export function HeroVideo() {
       return; // poster stays; the visitor can start it themselves
     }
 
-    el.play().then(
-      () => setPlaying(true),
-      () => setPlaying(false), // autoplay blocked — poster stays, control offers play
-    );
+    /* iOS Safari routinely refuses the first play() — hydration fires before the
+       media pipeline has any data, and a backgrounded or still-painting tab is
+       refused outright. One attempt left the poster up for good on iPhones, so
+       ask again whenever the element or the page says it is in a better state.
+       Anything short of Low Power Mode, which blocks autoplay unconditionally,
+       recovers on one of these. */
+    el.muted = true; // iOS reads the property, not the attribute, at play() time
+    el.preload = 'auto'; // only now that we know we intend to play it
+
+    let done = false;
+    let tries = 0;
+    const attempt = () => {
+      if (done || userPaused.current) return;
+      if (!el.paused) {
+        done = true;
+        setPlaying(true);
+        return;
+      }
+      el.play().then(
+        () => {
+          done = true;
+          setPlaying(true);
+        },
+        () => setPlaying(false), // still blocked — poster stays, control offers play
+      );
+    };
+
+    attempt();
+    /* The events below only fire if the element was not already ready when this
+       effect ran. When it was, nothing further fires and a single refusal would
+       stick — so poll briefly as well. */
+    const poll = setInterval(() => {
+      if (done || ++tries > 10) clearInterval(poll);
+      else attempt();
+    }, 300);
+    el.addEventListener('loadeddata', attempt);
+    el.addEventListener('canplay', attempt);
+    document.addEventListener('visibilitychange', attempt);
+    // Last resort: any gesture carries the activation iOS was holding out for.
+    const gestures = ['touchstart', 'pointerdown'] as const;
+    gestures.forEach((g) => document.addEventListener(g, attempt, { passive: true }));
+
+    return () => {
+      done = true;
+      clearInterval(poll);
+      el.removeEventListener('loadeddata', attempt);
+      el.removeEventListener('canplay', attempt);
+      document.removeEventListener('visibilitychange', attempt);
+      gestures.forEach((g) => document.removeEventListener(g, attempt));
+    };
   }, []);
 
   const toggle = () => {
     const el = video.current;
     if (!el) return;
     if (el.paused) {
+      userPaused.current = false;
       el.play().then(() => setPlaying(true), () => setPlaying(false));
     } else {
+      userPaused.current = true; // don't let a later retry override the choice
       el.pause();
       setPlaying(false);
     }
