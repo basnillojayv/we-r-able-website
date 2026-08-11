@@ -10,7 +10,9 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState('#home');
+  const [headerH, setHeaderH] = useState(84);
   const burger = useRef<HTMLButtonElement>(null);
+  const bar = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -33,6 +35,16 @@ export function Header() {
     );
     sections.forEach((s) => io.observe(s));
     return () => io.disconnect();
+  }, []);
+
+  /* The drawer hangs off the bottom of the bar, and the bar shrinks on scroll —
+     measure it rather than hard-coding a height that drifts. */
+  useEffect(() => {
+    const el = bar.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => setHeaderH(el.getBoundingClientRect().height));
+    ro.observe(el);
+    return () => ro.disconnect();
   }, []);
 
   useEffect(() => {
@@ -59,98 +71,105 @@ export function Header() {
   }, [open]);
 
   return (
-    <header
-      className={`sticky top-0 z-40 backdrop-blur-[14px] backdrop-saturate-150 border-b
-        transition-[background-color,border-color] duration-300 ease-(--ease-out-strong)
-        ${scrolled ? 'bg-cream/95 border-line' : 'bg-cream/85 border-transparent'}`}
-    >
-      <div
-        className={`shell flex items-center justify-between gap-6
-          transition-[min-height] duration-300 ease-(--ease-out-strong)
-          ${scrolled ? 'min-h-[70px]' : 'min-h-[84px]'}`}
+    <>
+      <header
+        ref={bar}
+        className={`sticky top-0 z-40 backdrop-blur-[14px] backdrop-saturate-150 border-b
+          transition-[background-color,border-color] duration-300 ease-(--ease-out-strong)
+          ${scrolled ? 'bg-cream/95 border-line' : 'bg-cream/85 border-transparent'}`}
       >
-        <a href="#home" aria-label={`${site.name} — home`} className="shrink-0">
-          <Image
-            src="/assets/brand/logo-primary.png"
-            alt={site.name}
-            width={560}
-            height={374}
-            priority
-            sizes="112px"
-            className={`w-auto origin-left transition-transform duration-300 ease-(--ease-out-strong)
-              ${scrolled ? 'h-16 scale-[0.85]' : 'h-16'}`}
-          />
-        </a>
-
-        <nav className="hidden lg:flex items-center gap-0.5" aria-label="Primary">
-          {nav.map((item) => {
-            const current = active === item.href;
-            return (
-              <a
-                key={item.href}
-                href={item.href}
-                aria-current={current ? 'true' : undefined}
-                className={`group relative px-3.5 py-2 rounded-full text-[0.9375rem]
-                  transition-colors duration-200 ease-(--ease-out-strong)
-                  ${current ? 'text-ink font-semibold' : 'text-muted font-medium hover:text-ink'}`}
-              >
-                {item.label}
-                <span
-                  aria-hidden
-                  className={`absolute left-3.5 right-3.5 bottom-1 h-0.5 rounded-sm bg-gold origin-left
-                    transition-transform duration-200 ease-(--ease-out-strong)
-                    ${current ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`}
-                />
-              </a>
-            );
-          })}
-        </nav>
-
-        <div className="hidden lg:flex">
-          <Button href="#contact" variant="dark" className="min-h-[46px] px-5">
-            Contact Us
-          </Button>
-        </div>
-
-        <button
-          ref={burger}
-          type="button"
-          onClick={() => setOpen((v) => !v)}
-          aria-expanded={open}
-          aria-controls="mobile-nav"
-          aria-label={open ? 'Close navigation menu' : 'Open navigation menu'}
-          className="lg:hidden grid place-items-center size-12 rounded-[14px] border-[1.5px]
-            border-line-strong cursor-pointer transition-colors duration-200
-            ease-(--ease-out-strong) hover:border-ink active:scale-[0.96]"
+        <div
+          className={`shell flex items-center justify-between gap-6
+            transition-[min-height] duration-300 ease-(--ease-out-strong)
+            ${scrolled ? 'min-h-[70px]' : 'min-h-[84px]'}`}
         >
-          <span className="sr-only">Menu</span>
-          <span aria-hidden className="relative block w-5">
-            <span
-              className={`absolute left-0 block h-[1.75px] w-5 rounded-sm bg-ink
-                transition-transform duration-300 ease-(--ease-out-strong)
-                ${open ? 'top-0 rotate-45' : '-top-1.5'}`}
+          <a href="#home" aria-label={`${site.name} — home`} className="shrink-0">
+            <Image
+              src="/assets/brand/logo-primary.png"
+              alt={site.name}
+              width={560}
+              height={374}
+              priority
+              sizes="112px"
+              className={`w-auto origin-left transition-transform duration-300 ease-(--ease-out-strong)
+                ${scrolled ? 'h-16 scale-[0.85]' : 'h-16'}`}
             />
-            <span
-              className={`block h-[1.75px] w-5 rounded-sm transition-colors duration-100
-                ${open ? 'bg-transparent' : 'bg-ink'}`}
-            />
-            <span
-              className={`absolute left-0 block h-[1.75px] w-5 rounded-sm bg-ink
-                transition-transform duration-300 ease-(--ease-out-strong)
-                ${open ? 'top-0 -rotate-45' : 'top-1.5'}`}
-            />
-          </span>
-        </button>
-      </div>
+          </a>
 
-      {/* Drawer. Exit is faster than enter — the system should feel quicker to
-          get out of the way than it was to arrive. */}
+          <nav className="hidden lg:flex items-center gap-0.5" aria-label="Primary">
+            {nav.map((item) => {
+              const current = active === item.href;
+              return (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  aria-current={current ? 'true' : undefined}
+                  className={`group relative px-3.5 py-2 rounded-full text-[0.9375rem]
+                    transition-colors duration-200 ease-(--ease-out-strong)
+                    ${current ? 'text-ink font-semibold' : 'text-muted font-medium hover:text-ink'}`}
+                >
+                  {item.label}
+                  <span
+                    aria-hidden
+                    className={`absolute left-3.5 right-3.5 bottom-1 h-0.5 rounded-sm bg-gold origin-left
+                      transition-transform duration-200 ease-(--ease-out-strong)
+                      ${current ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`}
+                  />
+                </a>
+              );
+            })}
+          </nav>
+
+          <div className="hidden lg:flex">
+            <Button href="#contact" variant="dark" className="min-h-[46px] px-5">
+              Contact Us
+            </Button>
+          </div>
+
+          <button
+            ref={burger}
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            aria-expanded={open}
+            aria-controls="mobile-nav"
+            aria-label={open ? 'Close navigation menu' : 'Open navigation menu'}
+            className="lg:hidden grid place-items-center size-12 rounded-[14px] border-[1.5px]
+              border-line-strong cursor-pointer transition-colors duration-200
+              ease-(--ease-out-strong) hover:border-ink active:scale-[0.96]"
+          >
+            <span className="sr-only">Menu</span>
+            <span aria-hidden className="relative block w-5">
+              <span
+                className={`absolute left-0 block h-[1.75px] w-5 rounded-sm bg-ink
+                  transition-transform duration-300 ease-(--ease-out-strong)
+                  ${open ? 'top-0 rotate-45' : '-top-1.5'}`}
+              />
+              <span
+                className={`block h-[1.75px] w-5 rounded-sm transition-colors duration-100
+                  ${open ? 'bg-transparent' : 'bg-ink'}`}
+              />
+              <span
+                className={`absolute left-0 block h-[1.75px] w-5 rounded-sm bg-ink
+                  transition-transform duration-300 ease-(--ease-out-strong)
+                  ${open ? 'top-0 -rotate-45' : 'top-1.5'}`}
+              />
+            </span>
+          </button>
+        </div>
+      </header>
+
+      {/* Drawer lives outside <header>: the header's backdrop-filter makes it a
+          containing block for fixed children, which collapsed the panel to the
+          height of the bar itself. Exit is faster than enter — the system should
+          feel quicker to get out of the way than it was to arrive. */}
       <nav
         id="mobile-nav"
         aria-label="Mobile"
         onClick={(e) => (e.target as HTMLElement).closest('a') && setOpen(false)}
-        className={`lg:hidden fixed inset-x-0 bottom-0 top-[84px] z-30 grid content-start gap-1
-          overflow-y-auto bg-cream px-[clamp(1.25rem,4.4vw,3rem)] pt-6 pb-10
+        style={{ top: headerH }}
+        className={`lg:hidden fixed inset-x-0 bottom-0 z-30 grid content-start gap-1
+          overflow-y-auto overscroll-contain bg-cream px-[clamp(1.25rem,4.4vw,3rem)] pt-6
+          pb-[max(2.5rem,env(safe-area-inset-bottom))]
           transition-[opacity,transform,visibility] ease-(--ease-out-strong)
           ${
             open
@@ -183,6 +202,6 @@ export function Header() {
           <span>Caroline Springs, VIC — supporting Metro Melbourne</span>
         </div>
       </nav>
-    </header>
+    </>
   );
 }

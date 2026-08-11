@@ -7,16 +7,40 @@ export function AreasServed() {
   return (
     <section id="areas" className="section-y bg-cream">
       <div className="shell">
-        <Reveal className="mb-[clamp(2.5rem,4.5vw,4rem)] grid max-w-[62ch] gap-[1.15rem]">
-          <h2>Proudly Supporting Metro Melbourne</h2>
-          <p className="text-lead leading-[1.6] text-muted">
-            WE R ABLE supports participants across a growing number of suburbs and localities
-            throughout Melbourne.
-          </p>
-        </Reveal>
+        {/* Heading shares row 1 with the map so their top edges line up; the map
+            spans both rows and the cards sit beneath the heading. */}
+        <div
+          className="grid gap-x-[clamp(2.25rem,4.5vw,4.5rem)] gap-y-[clamp(2.5rem,4.5vw,4rem)]
+            lg:grid-cols-[1fr_0.8fr] lg:grid-rows-[auto_1fr]"
+        >
+          <Reveal className="grid max-w-[62ch] content-start gap-[1.15rem] lg:col-start-1 lg:row-start-1">
+            <h2>Proudly Supporting Metro Melbourne</h2>
+            <p className="text-lead leading-[1.6] text-muted">
+              WE R ABLE supports participants across a growing number of suburbs and localities
+              throughout Melbourne.
+            </p>
+          </Reveal>
 
-        <div className="grid gap-[clamp(2.25rem,4.5vw,4.5rem)] lg:grid-cols-[1fr_0.8fr]">
-          <div className="flex flex-col">
+          <Reveal
+            as="figure"
+            kind="rise"
+            delay={120}
+            className="flex flex-col overflow-hidden rounded-panel bg-ink-deep
+              p-[clamp(1.5rem,3vw,2.25rem)] text-cream
+              lg:col-start-2 lg:row-start-1 lg:row-span-2"
+          >
+            <div className="grid min-h-0 flex-1 place-items-center">
+              <MelbourneMap className="mx-auto h-full max-h-[clamp(280px,42vw,460px)] w-full" />
+            </div>
+            <figcaption className="mt-[1.1rem] border-t border-line-dark pt-[1.1rem]
+              text-[0.8125rem] leading-[1.55] text-muted-dark">
+              <strong className="text-cream">Based in Caroline Springs, VIC 3023.</strong> Support
+              is delivered where participants live, work and take part — across Metro Melbourne.
+              Map is illustrative, not a service boundary.
+            </figcaption>
+          </Reveal>
+
+          <div className="flex flex-col lg:col-start-1 lg:row-start-2">
             <ul className="grid gap-[clamp(0.85rem,1.8vw,1.25rem)] sm:grid-cols-2">
               {regions.map((region, i) => (
                 <Reveal
@@ -58,24 +82,6 @@ export function AreasServed() {
               </Button>
             </div>
           </div>
-
-          <Reveal
-            as="figure"
-            kind="rise"
-            delay={120}
-            className="flex flex-col overflow-hidden rounded-panel bg-ink-deep
-              p-[clamp(1.5rem,3vw,2.25rem)] text-cream max-lg:order-first"
-          >
-            <div className="grid min-h-0 flex-1 place-items-center">
-              <MelbourneMap className="mx-auto h-full max-h-[clamp(280px,42vw,460px)] w-full" />
-            </div>
-            <figcaption className="mt-[1.1rem] border-t border-line-dark pt-[1.1rem]
-              text-[0.8125rem] leading-[1.55] text-muted-dark">
-              <strong className="text-cream">Based in Caroline Springs, VIC 3023.</strong> Support
-              is delivered where participants live, work and take part — across Metro Melbourne.
-              Map is illustrative, not a service boundary.
-            </figcaption>
-          </Reveal>
         </div>
       </div>
     </section>
