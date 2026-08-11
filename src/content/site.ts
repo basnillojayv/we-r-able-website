@@ -231,6 +231,53 @@ export const regions: Region[] = [
   },
 ];
 
+/* The first two are official NDIS resources published on the NDIA and
+   Commission YouTube channels — credited as theirs, not presented as ours.
+   The third is WE R ABLE's own reel. Thumbnails are hosted locally so no
+   third party is contacted before a visitor presses play. */
+export type Video = {
+  id: string;
+  kind: 'youtube' | 'facebook';
+  title: string;
+  body: string;
+  credit: string;
+  source: string;
+  href: string;
+  thumb?: string;
+};
+
+export const videos: Video[] = [
+  {
+    id: 'OQWeTiFaheI',
+    kind: 'youtube',
+    title: 'Bringing the NDIS vision to life',
+    body: 'What the Scheme sets out to do, and what it means for participants day to day.',
+    credit: 'NDIS Australia',
+    source: 'YouTube',
+    href: 'https://youtu.be/OQWeTiFaheI',
+    thumb: '/assets/img/video-OQWeTiFaheI-960.webp',
+  },
+  {
+    id: 'nFIeHFazBuI',
+    kind: 'youtube',
+    title: 'NDIS Code of Conduct',
+    body: 'The standards every registered provider — including us — is held to.',
+    credit: 'NDIS Quality and Safeguards Commission',
+    source: 'YouTube',
+    href: 'https://www.youtube.com/watch?v=nFIeHFazBuI',
+    thumb: '/assets/img/video-nFIeHFazBuI-960.webp',
+  },
+  {
+    id: 'reel-1193331752879761',
+    kind: 'facebook',
+    title: 'From our team',
+    body: 'A recent update from the WE R ABLE team, posted to our Facebook page.',
+    credit: 'WE R ABLE',
+    source: 'Facebook',
+    href: 'https://www.facebook.com/reel/1193331752879761/',
+  },
+];
+
 export const enquiryTopics = [
   'Starting support with WE R ABLE',
   'Travel & transport',

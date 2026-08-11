@@ -63,6 +63,9 @@ export function HeroVideo() {
           transition-opacity duration-700 ease-(--ease-out-strong)
           ${ready ? 'opacity-100' : 'opacity-0'}`}
       >
+        {/* Full-bleed means the footage is upscaled to the viewport, so the
+            width ladder matters more than it would inside a card. */}
+        <source src="/assets/video/hero-1080.mp4" media="(min-width: 1280px)" type="video/mp4" />
         <source src="/assets/video/hero-720.mp4" media="(min-width: 768px)" type="video/mp4" />
         <source src="/assets/video/hero-480.mp4" type="video/mp4" />
       </video>
@@ -71,8 +74,8 @@ export function HeroVideo() {
         type="button"
         onClick={toggle}
         aria-pressed={!playing}
-        className="group absolute bottom-5 right-5 z-30 grid size-11 place-items-center
-          md:bottom-auto md:top-5
+        className="group absolute bottom-5 right-[clamp(1.25rem,4.4vw,3rem)] z-30 grid size-11
+          place-items-center md:bottom-auto md:top-6
           rounded-full border border-cream/35 bg-ink-deep/55 text-cream backdrop-blur-sm
           cursor-pointer transition-[background-color,border-color,transform] duration-200
           ease-(--ease-out-strong) hover:bg-ink-deep/80 hover:border-cream/70

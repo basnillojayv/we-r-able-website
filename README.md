@@ -60,9 +60,12 @@ logo. It appears once, on the hero kicker, rather than above every section.
 
 ## Hero video
 
-`public/assets/video/` holds a 720p and a 480p cut, chosen by a `media` attribute on `<source>`.
-The source was a 12 MB UHD file; transcoded with audio stripped and faststart enabled it is
-**796 KB** at 720p and 359 KB at 480p.
+The hero is full-bleed: the footage spans the viewport while the copy stays on the page grid.
+
+`public/assets/video/` holds 1080p / 720p / 480p cuts, chosen by a `media` attribute on
+`<source>` — the ladder matters because full-bleed upscales the footage to the viewport. The
+source was a 12 MB UHD file; transcoded with audio stripped and faststart enabled it is
+**1.5 MB** at 1080p, 796 KB at 720p and 359 KB at 480p.
 
 The loop runs longer than five seconds, so WCAG 2.2.2 requires a way to stop it — the pause
 control ships with the video, not as an afterthought. Autoplay is skipped entirely when the
@@ -91,6 +94,18 @@ const ENQUIRY_ENDPOINT: string | null = 'https://…';   // accepts a JSON POST
 
 Validation, error and success states, focus management and the disabled state already work
 against it.
+
+## Video library
+
+`VideoLibrary` shows three click-to-load facades. Each card renders a locally hosted thumbnail
+and only mounts a player when asked; YouTube is embedded via `youtube-nocookie.com`. Three live
+iframes would otherwise contact Google and Meta on page load, before anyone pressed play.
+
+**Attribution matters here.** Two of the three videos are official NDIS resources published by
+the National Disability Insurance Agency and the NDIS Quality and Safeguards Commission — not
+WE R ABLE productions. Each card credits its publisher, and a note under the grid states the
+distinction and links to ndis.gov.au and ndiscommission.gov.au. For a registered provider,
+presenting regulator content as its own would be a compliance problem, not a design detail.
 
 ## Facebook section
 

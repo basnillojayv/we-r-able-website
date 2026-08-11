@@ -10,6 +10,7 @@ import { HowWeWork } from '@/components/HowWeWork';
 import { Services } from '@/components/Services';
 import { TrustStrip } from '@/components/TrustStrip';
 import { Values } from '@/components/Values';
+import { VideoLibrary } from '@/components/VideoLibrary';
 
 export default function Page() {
   return (
@@ -22,6 +23,7 @@ export default function Page() {
         <Values />
         <Services />
         <HowWeWork />
+        <VideoLibrary />
         <AreasServed />
         <CTA />
         <Contact />
