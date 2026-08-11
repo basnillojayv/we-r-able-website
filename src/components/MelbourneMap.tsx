@@ -4,13 +4,16 @@
   rather than as a generic blob. The dashed ring is indicative reach across the
   metropolitan area, not a service boundary — the caption says so.
 */
-export function MelbourneMap() {
+export function MelbourneMap({ className = '' }: { className?: string }) {
   return (
     <svg
       viewBox="60 26 400 556"
       role="img"
       aria-label="Stylised map of Greater Melbourne showing Port Phillip Bay, with WE R ABLE based at Caroline Springs and support delivered across the metropolitan area."
-      className="w-full"
+      /* meet, not slice: the map scales to fit whatever box the column gives
+         it rather than dictating the height of the section. */
+      preserveAspectRatio="xMidYMid meet"
+      className={className}
     >
       <ellipse
         cx="272"

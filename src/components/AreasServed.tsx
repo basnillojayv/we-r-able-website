@@ -15,11 +15,13 @@ export function AreasServed() {
           </p>
         </Reveal>
 
-        <div className="grid items-start gap-[clamp(2.25rem,4.5vw,4.5rem)] lg:grid-cols-[1fr_0.92fr]">
-          <Reveal>
+        <div className="grid gap-[clamp(2.25rem,4.5vw,4.5rem)] lg:grid-cols-[1fr_0.8fr]">
+          <div className="flex flex-col">
             <ul className="grid gap-[clamp(0.85rem,1.8vw,1.25rem)] sm:grid-cols-2">
-              {regions.map((region) => (
-                <li
+              {regions.map((region, i) => (
+                <Reveal
+                  as="li"
+                  delay={i * 80}
                   key={region.name}
                   className="group grid gap-1.5 rounded-card border border-line bg-white
                     px-[1.35rem] py-5 transition-[transform,box-shadow,border-color]
@@ -42,11 +44,11 @@ export function AreasServed() {
                       ))}
                     </ul>
                   )}
-                </li>
+                </Reveal>
               ))}
             </ul>
 
-            <div className="mt-[clamp(1.25rem,2.4vw,1.75rem)] flex flex-wrap items-center gap-4 gap-x-5">
+            <div className="mt-[clamp(1.25rem,2.4vw,1.75rem)] flex flex-wrap items-center gap-4 gap-x-5 lg:mt-auto lg:pt-8">
               <p className="flex-1 basis-70 text-small text-muted">
                 Not sure whether we cover your suburb? Give us a call and we&rsquo;ll let you know
                 straight away.
@@ -55,16 +57,18 @@ export function AreasServed() {
                 Call {site.phone.display}
               </Button>
             </div>
-          </Reveal>
+          </div>
 
           <Reveal
             as="figure"
             kind="rise"
             delay={120}
-            className="overflow-hidden rounded-panel bg-ink-deep p-[clamp(1.5rem,3vw,2.25rem)]
-              text-cream max-lg:order-first"
+            className="flex flex-col overflow-hidden rounded-panel bg-ink-deep
+              p-[clamp(1.5rem,3vw,2.25rem)] text-cream max-lg:order-first"
           >
-            <MelbourneMap />
+            <div className="grid min-h-0 flex-1 place-items-center">
+              <MelbourneMap className="mx-auto h-full max-h-[clamp(280px,42vw,460px)] w-full" />
+            </div>
             <figcaption className="mt-[1.1rem] border-t border-line-dark pt-[1.1rem]
               text-[0.8125rem] leading-[1.55] text-muted-dark">
               <strong className="text-cream">Based in Caroline Springs, VIC 3023.</strong> Support

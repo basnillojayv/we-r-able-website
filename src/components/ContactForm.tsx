@@ -5,14 +5,14 @@ import { Icon } from './Icon';
 import { enquiryTopics, site } from '@/content/site';
 
 /*
-  There is no backend on this build, so the form never claims to have sent
-  anything. It validates, hands the enquiry to the visitor's own email client,
-  and says exactly that.
+  Posts to our own route handler, which delivers to the WE R ABLE inbox
+  server-side. The destination address is deliberately not in this file — it
+  lives in src/app/api/enquiry/route.ts, out of reach of address harvesters.
 
-  To connect a backend later, set ENQUIRY_ENDPOINT to a URL that accepts a JSON
-  POST. Nothing else in this file changes.
+  If the request fails, the form says so and offers the phone number, rather
+  than swallowing the error and leaving someone believing they got through.
 */
-const ENQUIRY_ENDPOINT: string | null = null;
+const ENQUIRY_ENDPOINT = '/api/enquiry';
 
 type Field = {
   name: string;
@@ -76,28 +76,6 @@ export function ContactForm() {
 
     const data = Object.fromEntries(els.map((el) => [el.name, el.value.trim()]));
 
-    if (!ENQUIRY_ENDPOINT) {
-      const body = [
-        `Name: ${data.firstName} ${data.lastName}`,
-        `Email: ${data.email}`,
-        `Phone: ${data.phone || 'Not provided'}`,
-        `Enquiry about: ${data.topic}`,
-        '',
-        data.message,
-      ].join('\n');
-      window.location.href =
-        `mailto:${site.email}` +
-        `?subject=${encodeURIComponent(`Website enquiry — ${data.firstName} ${data.lastName}`)}` +
-        `&body=${encodeURIComponent(body)}`;
-      setStatus({
-        state: 'ok',
-        text:
-          'Your email app should now be open with this enquiry ready for you to send. ' +
-          `If nothing opened, please email ${site.email} or call ${site.phone.display}.`,
-      });
-      return;
-    }
-
     setSending(true);
     try {
       const res = await fetch(ENQUIRY_ENDPOINT, {
@@ -105,14 +83,27 @@ export function ContactForm() {
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify(data),
       });
-      if (!res.ok) throw new Error(String(res.status));
+      const out = (await res.json().catch(() => ({}))) as {
+        ok?: boolean;
+        pendingActivation?: boolean;
+      };
+      if (!res.ok || !out.ok) throw new Error(String(res.status));
+
       form.current?.reset();
       setInvalid({});
-      setStatus({ state: 'ok', text: 'Thanks — your enquiry has been sent. Our team will be in touch shortly.' });
+      setStatus({
+        state: 'ok',
+        text: out.pendingActivation
+          ? 'Thanks — your enquiry has been submitted. Delivery to our inbox is still being ' +
+            `set up, so if you need us today please call ${site.phone.display}.`
+          : 'Thanks — your enquiry has been sent. Our team will be in touch shortly.',
+      });
     } catch {
       setStatus({
         state: 'error',
-        text: `Sorry, your enquiry could not be sent just now. Please email ${site.email} or call ${site.phone.display}.`,
+        text:
+          'Sorry, your enquiry could not be sent just now. Please email ' +
+          `${site.email} or call ${site.phone.display}.`,
       });
     } finally {
       setSending(false);
@@ -126,6 +117,13 @@ export function ContactForm() {
       noValidate
       className="rounded-panel border border-line bg-cream p-[clamp(1.5rem,3vw,2.5rem)]"
     >
+      {/* Honeypot. Hidden from sight and from assistive tech, and skipped by
+          the keyboard, so only a script ever fills it in. */}
+      <div aria-hidden className="absolute left-[-9999px] h-px w-px overflow-hidden">
+        <label htmlFor="company">Company</label>
+        <input id="company" name="company" type="text" tabIndex={-1} autoComplete="off" />
+      </div>
+
       <div className="grid gap-[1.1rem] sm:grid-cols-2">
         {fields.map((f) => {
           const isBad = invalid[f.name];

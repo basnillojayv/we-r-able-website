@@ -83,17 +83,21 @@ suburbs. To publish the real list, add a `suburbs` array to any entry in the `re
 
 ## Contact form
 
-There is no backend, so the form never claims to have sent anything. It validates, hands the
-enquiry to the visitor's email client, and says exactly that.
+Enquiries post to `/api/enquiry`, a route handler that delivers server-side to
+**werable.disability@gmail.com**. The destination address is not in the client bundle, so it is
+never handed to address-harvesting crawlers. A hidden honeypot field is accepted silently, giving
+bots no signal to retry.
 
-To connect a backend, set one constant in `src/components/ContactForm.tsx`:
+Two delivery paths, chosen by configuration:
 
-```ts
-const ENQUIRY_ENDPOINT: string | null = 'https://…';   // accepts a JSON POST
-```
+| Env | Provider | Notes |
+| --- | --- | --- |
+| `RESEND_API_KEY` set | Resend | Preferred. Proper From address, real deliverability, no third party in between. Needs a verified sender domain; set `ENQUIRY_FROM` to a mailbox on it. |
+| nothing set | FormSubmit | No signup, no key. **The first submission triggers a one-time activation email to the destination inbox — nothing is delivered until someone clicks that link.** |
 
-Validation, error and success states, focus management and the disabled state already work
-against it.
+`ENQUIRY_TO` overrides the destination. While activation is pending the API returns
+`pendingActivation: true` and the form says delivery is still being set up rather than showing a
+false confirmation.
 
 ## Video library
 

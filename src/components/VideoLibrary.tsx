@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useState } from 'react';
 import { FacebookIcon, Icon } from './Icon';
+import { Reveal } from './Reveal';
 import { videos, site } from '@/content/site';
 
 /*
@@ -20,19 +21,22 @@ export function VideoLibrary() {
   return (
     <section aria-labelledby="videos-title" className="section-y bg-white">
       <div className="shell">
-        <div className="mb-[clamp(2.5rem,4.5vw,4rem)] grid items-end gap-[clamp(1.15rem,3vw,3.5rem)] md:grid-cols-[1.05fr_0.95fr]">
+        <Reveal className="mb-[clamp(2.5rem,4.5vw,4rem)] grid items-end gap-[clamp(1.15rem,3vw,3.5rem)] md:grid-cols-[1.05fr_0.95fr]">
           <h2 id="videos-title">Understanding the NDIS</h2>
           <p className="max-w-[56ch] text-lead leading-[1.6] text-muted">
             Two short explainers published by the NDIA and the NDIS Quality and Safeguards
             Commission, and a look at our own team at work.
           </p>
-        </div>
+        </Reveal>
 
         <ul className="grid gap-[clamp(1rem,2vw,1.5rem)] lg:grid-cols-3">
-          {videos.map((video) => {
+          {videos.map((video, i) => {
             const live = playing === video.id;
             return (
-              <li
+              <Reveal
+                as="li"
+                kind="rise"
+                delay={i * 90}
                 key={video.id}
                 className="group overflow-hidden rounded-panel border border-line bg-cream
                   transition-[transform,box-shadow,border-color] duration-300
@@ -121,12 +125,15 @@ export function VideoLibrary() {
                     <Icon name="arrowNe" className="size-3.5" />
                   </a>
                 </div>
-              </li>
+              </Reveal>
             );
           })}
         </ul>
 
-        <p className="mt-[clamp(1.5rem,3vw,2.25rem)] max-w-[70ch] text-small leading-[1.6] text-muted">
+        <Reveal
+          as="p"
+          className="mt-[clamp(1.5rem,3vw,2.25rem)] max-w-[70ch] text-small leading-[1.6] text-muted"
+        >
           The first two videos are published by the National Disability Insurance Agency and the
           NDIS Quality and Safeguards Commission. They are shared here as reference material and
           are not WE R ABLE productions. For the official versions, see{' '}
@@ -154,7 +161,7 @@ export function VideoLibrary() {
             Facebook
           </a>
           .
-        </p>
+        </Reveal>
       </div>
     </section>
   );

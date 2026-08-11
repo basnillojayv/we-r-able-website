@@ -28,11 +28,7 @@ export function About() {
           </figure>
         </Reveal>
 
-        <Reveal
-          kind="rise"
-          delay={120}
-          className="overflow-hidden rounded-panel border border-line bg-cream"
-        >
+        <div className="overflow-hidden rounded-panel border border-line bg-cream">
           <div className="grid gap-1.5 border-b border-line p-[clamp(1.25rem,2.4vw,1.85rem)]">
             <h3>The idea behind our name</h3>
             <p className="text-small text-muted">
@@ -40,8 +36,10 @@ export function About() {
             </p>
           </div>
           <ul>
-            {able.map((row) => (
-              <li
+            {able.map((row, i) => (
+              <Reveal
+                as="li"
+                delay={180 + i * 80}
                 key={row.letter}
                 className="group grid grid-cols-[58px_1fr] items-center gap-4 border-b border-line
                   p-[clamp(1.05rem,2vw,1.35rem)] px-[clamp(1.25rem,2.4vw,1.85rem)] last:border-b-0
@@ -63,10 +61,10 @@ export function About() {
                   <h4 className="text-[1.125rem]">{row.word}</h4>
                   <p className="text-small leading-[1.55] text-muted">{row.body}</p>
                 </div>
-              </li>
+              </Reveal>
             ))}
           </ul>
-        </Reveal>
+        </div>
       </div>
     </section>
   );
