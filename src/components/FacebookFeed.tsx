@@ -50,7 +50,7 @@ export function FacebookFeed() {
           </a>
         </div>
 
-        <div className="overflow-hidden rounded-panel border border-line bg-white">
+        <div className="fold fold-tall overflow-hidden rounded-panel border border-line bg-white">
           {loaded ? (
             <iframe
               src={PAGE_PLUGIN}

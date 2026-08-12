@@ -14,7 +14,7 @@ export function Services() {
           </p>
         </Reveal>
 
-        <ul className="grid gap-[clamp(0.85rem,1.6vw,1.25rem)] sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="fold fold-wide grid gap-[clamp(0.85rem,1.6vw,1.25rem)] sm:grid-cols-2 lg:grid-cols-3">
           {services.map((service, i) => (
             <Reveal
               as="li"

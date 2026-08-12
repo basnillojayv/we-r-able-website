@@ -25,7 +25,7 @@ export function AreasServed() {
             as="figure"
             kind="rise"
             delay={120}
-            className="flex flex-col overflow-hidden rounded-panel bg-ink-deep
+            className="fold fold-tall flex flex-col overflow-hidden rounded-panel bg-ink-deep
               p-[clamp(1.5rem,3vw,2.25rem)] text-cream
               lg:col-start-2 lg:row-start-1 lg:row-span-2"
           >

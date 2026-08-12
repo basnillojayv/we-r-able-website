@@ -29,7 +29,7 @@ export function VideoLibrary() {
           </p>
         </Reveal>
 
-        <ul className="grid gap-[clamp(1rem,2vw,1.5rem)] lg:grid-cols-3">
+        <ul className="fold grid gap-[clamp(1rem,2vw,1.5rem)] lg:grid-cols-3">
           {videos.map((video, i) => {
             const live = playing === video.id;
             return (

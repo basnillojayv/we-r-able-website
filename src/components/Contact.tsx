@@ -111,7 +111,7 @@ export function Contact() {
               ))}
             </dl>
 
-            <figure className="group mt-[clamp(1.75rem,3vw,2.5rem)] overflow-hidden rounded-panel max-lg:hidden">
+            <figure className="group mt-[clamp(1.75rem,3vw,2.5rem)] overflow-hidden rounded-panel max-lg:hidden fold">
               <Image
                 src="/assets/img/areas-outdoors-960.webp"
                 alt="A support worker walking outdoors alongside a participant using a wheelchair."

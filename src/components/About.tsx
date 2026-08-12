@@ -21,14 +21,14 @@ export function About() {
               width={960}
               height={1199}
               sizes="(max-width: 1024px) 100vw, 46vw"
-              className="aspect-16/10 w-full object-cover object-[50%_35%]
+              className="parallax aspect-16/10 w-full object-cover object-[50%_35%]
                 transition-transform duration-[600ms] ease-(--ease-out-strong)
-                group-hover:scale-[1.03] motion-reduce:group-hover:scale-100"
+                group-hover:scale-[1.14] motion-reduce:group-hover:scale-100"
             />
           </figure>
         </Reveal>
 
-        <div className="overflow-hidden rounded-panel border border-line bg-cream">
+        <div className="fold fold-tall overflow-hidden rounded-panel border border-line bg-cream">
           <div className="grid gap-1.5 border-b border-line p-[clamp(1.25rem,2.4vw,1.85rem)]">
             <h3>The idea behind our name</h3>
             <p className="text-small text-muted">

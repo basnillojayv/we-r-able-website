@@ -18,6 +18,21 @@ export function HeroVideo() {
   const [ready, setReady] = useState(false);
   const userPaused = useRef(false);
 
+  /* The element is server-rendered, so it starts loading before React hydrates
+     and `loadeddata` can fire before onLoadedData is ever attached. The missed
+     event left `ready` false forever, which held the video — and therefore its
+     poster — at opacity 0: a flat navy hero with no image. Reduced-motion
+     visitors hit it every time, because for them the poster is the whole hero.
+     Reconcile against readyState on mount rather than trusting the event. */
+  useEffect(() => {
+    const el = video.current;
+    if (!el) return;
+    if (el.readyState >= 2) setReady(true);
+    const onData = () => setReady(true);
+    el.addEventListener('loadeddata', onData);
+    return () => el.removeEventListener('loadeddata', onData);
+  }, []);
+
   useEffect(() => {
     const el = video.current;
     if (!el) return;
@@ -108,7 +123,7 @@ export function HeroVideo() {
         preload="metadata"
         poster="/assets/video/hero-poster.webp"
         onLoadedData={() => setReady(true)}
-        className={`absolute inset-0 size-full object-cover object-[58%_38%]
+        className={`parallax-hero absolute inset-0 size-full object-cover object-[58%_38%]
           transition-opacity duration-700 ease-(--ease-out-strong)
           ${ready ? 'opacity-100' : 'opacity-0'}`}
       >

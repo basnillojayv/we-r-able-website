@@ -28,9 +28,9 @@ export function HowWeWork() {
               width={960}
               height={1067}
               sizes="(max-width: 1024px) 100vw, 34vw"
-              className="aspect-video w-full object-cover object-[55%_45%]
+              className="parallax aspect-video w-full object-cover object-[55%_45%]
                 transition-transform duration-[600ms] ease-(--ease-out-strong)
-                group-hover:scale-[1.04] motion-reduce:group-hover:scale-100"
+                group-hover:scale-[1.15] motion-reduce:group-hover:scale-100"
             />
           </figure>
         </Reveal>

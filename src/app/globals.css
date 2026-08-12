@@ -220,6 +220,102 @@
   }
 }
 
+/* ==========================================================================
+   Scroll-linked depth — fold and parallax
+
+   Both are CSS scroll-driven animations on a `view()` timeline. That choice is
+   the whole design:
+
+   - They are opt-IN. Everything sits inside `prefers-reduced-motion:
+     no-preference` and `@supports (animation-timeline: view())`, so a browser
+     without support and a visitor who asked for less motion both get the plain,
+     already-correct page. Nothing has to be undone afterwards.
+   - They are driven by scroll position, not by a scroll *event*. The compositor
+     runs them off the main thread, so there is no listener, no rAF loop, and
+     nothing to jank when the page is busy.
+   - Progress is tied to where the element is, so an effect can never be
+     stranded half-played the way a one-shot transition can.
+
+   Amplitudes are deliberately small. A meaningful share of this audience has
+   vestibular sensitivity, and parallax is one of the effects that provokes it;
+   the depth should register at the edge of attention, not announce itself.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    /* The fold. A panel hinges up from its top edge as it enters, as though it
+       were being laid down onto the page. Angle and travel are per-element
+       custom properties so no two sections have to move by the same amount. */
+    @keyframes fold-in {
+      from {
+        opacity: 0;
+        transform: perspective(1600px) rotateX(var(--fold-a, 5deg))
+          translateY(var(--fold-y, 22px)) scale(var(--fold-s, 0.99));
+      }
+      /* `none`, not an identity transform. A transform that stays applied
+         keeps the panel on its own composited layer for the life of the page,
+         which is where transformed text picks up its faint blur. Landing on
+         `none` drops the layer once the fold is done; interpolating to it is
+         well-defined, so the motion is unchanged. */
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    .fold {
+      transform-origin: 50% 0%;
+      animation: fold-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 62%;
+    }
+
+    /* Wide dark panels are the largest moving surfaces on the page, so they
+       move least — a big plane at the same angle reads as a lurch. */
+    .fold-wide {
+      --fold-a: 3deg;
+      --fold-y: 16px;
+      animation-range: entry 0% entry 50%;
+    }
+
+    /* Tall single columns (the form, the map) get travel instead of angle;
+       rotating something taller than the viewport swings its far edge too far. */
+    .fold-tall {
+      --fold-a: 2deg;
+      --fold-y: 30px;
+      animation-range: entry 0% entry 55%;
+    }
+
+    /* Parallax. The frame clips; the media inside is overscanned and drifts
+       against the scroll. `translate` is its own property, so this composes
+       with any `scale` hover already on the element instead of fighting it. */
+    @keyframes parallax-drift {
+      from { translate: 0 calc(var(--par, 3%) * -1); }
+      to   { translate: 0 var(--par, 3%); }
+    }
+
+    .parallax {
+      scale: var(--par-scale, 1.1);
+      animation: parallax-drift linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+    }
+
+    /* The hero is already on screen at load, so it has no entry phase to ride.
+       Anchor it to the root scroller instead and let it sink as the page moves
+       off it — the one piece of parallax the visitor sees first. */
+    .parallax-hero {
+      /* Overscanned so the drift never exposes an edge: 12% of extra height
+         against a ±4% travel leaves 2% of margin at each extreme. */
+      scale: 1.12;
+      animation: parallax-drift linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 100vh;
+      --par: 4%;
+    }
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 

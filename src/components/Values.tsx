@@ -10,7 +10,7 @@ export function Values() {
           <h2 id="values-title">Our purpose, in plain words.</h2>
         </Reveal>
 
-        <div className="grid gap-[clamp(1rem,2vw,1.5rem)] lg:grid-cols-3">
+        <div className="fold fold-wide grid gap-[clamp(1rem,2vw,1.5rem)] lg:grid-cols-3">
           {pillars.map((pillar, i) => {
             const [bg, text] = pillar.accent.split(' ');
             return (

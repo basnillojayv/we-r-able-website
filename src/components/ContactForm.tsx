@@ -115,7 +115,7 @@ export function ContactForm() {
       ref={form}
       onSubmit={onSubmit}
       noValidate
-      className="rounded-panel border border-line bg-cream p-[clamp(1.5rem,3vw,2.5rem)]"
+      className="fold fold-tall rounded-panel border border-line bg-cream p-[clamp(1.5rem,3vw,2.5rem)]"
     >
       {/* Honeypot. Hidden from sight and from assistive tech, and skipped by
           the keyboard, so only a script ever fills it in. */}

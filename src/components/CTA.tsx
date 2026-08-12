@@ -4,7 +4,7 @@ import { Reveal } from './Reveal';
 export function CTA() {
   return (
     <section aria-labelledby="cta-title" className="bg-gold py-[clamp(3.5rem,6.5vw,6rem)]">
-      <div className="shell grid items-center gap-[clamp(1.75rem,4vw,4rem)] md:grid-cols-[1fr_auto]">
+      <div className="fold fold-wide shell grid items-center gap-[clamp(1.75rem,4vw,4rem)] md:grid-cols-[1fr_auto]">
         <Reveal>
           <h2 id="cta-title" className="max-w-[16ch] text-ink">
             Let&rsquo;s Make A Difference Together.

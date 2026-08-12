@@ -10,7 +10,7 @@ export function TrustStrip() {
       </h2>
       <div className="shell">
         <ul
-          className="grid overflow-hidden rounded-panel border border-line bg-white
+          className="fold grid overflow-hidden rounded-panel border border-line bg-white
             shadow-card sm:grid-cols-2 lg:grid-cols-4"
         >
           {trust.map((item, i) => (
