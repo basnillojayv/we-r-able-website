@@ -51,7 +51,7 @@ export function Hero() {
             </span>
           </h1>
 
-          <p className="hero-rise max-w-[46ch] text-lead leading-[1.6] text-[#c6d6ea] [--d:160ms]">
+          <p className="hero-rise max-w-[46ch] text-lead leading-[1.6] text-ink-faint [--d:160ms]">
             Personalised support that empowers people with disability to live with greater
             independence, confidence and choice.
           </p>

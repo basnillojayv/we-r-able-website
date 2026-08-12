@@ -1,66 +1,5 @@
 @import "tailwindcss";
-
-/* ==========================================================================
-   WE R ABLE — design tokens
-   Colour sampled from the brand logo artwork, not guessed.
-   ========================================================================== */
-
-@theme {
-  /* ---- colour ---- */
-  --color-ink: #0b2545;          /* primary navy — body copy, headings        */
-  --color-ink-deep: #071c34;     /* deepest navy — dark sections, footer      */
-  --color-ink-mid: #123765;      /* navy tint for hovers on dark              */
-  --color-muted: #4c6383;        /* secondary copy on light                   */
-  --color-muted-dark: #a8bdd8;   /* secondary copy on navy                    */
-
-  --color-blue: #2576b4;
-  --color-blue-deep: #1f6ba6;    /* clears AA as small text on light          */
-  --color-blue-soft: #e9f1f8;
-  --color-gold: #f7b60e;
-  --color-gold-mid: #b57f07;     /* icon-weight gold on light                 */
-  --color-gold-deep: #8a6108;    /* clears AA as small text on light          */
-  --color-magenta: #c7356c;
-  --color-magenta-soft: #fbecf1;
-  --color-cream: #f7f3ec;
-
-  --color-line: rgb(11 37 69 / 0.13);
-  --color-line-strong: rgb(11 37 69 / 0.22);
-  --color-line-dark: rgb(233 241 248 / 0.16);
-
-  /* ---- type ---- */
-  /* next/font self-hosts these and exposes the family on the html element */
-  --font-display: var(--font-display-loaded), "Trebuchet MS", system-ui, sans-serif;
-  --font-body: var(--font-body-loaded), ui-sans-serif, system-ui, sans-serif;
-
-  --text-eyebrow: 0.75rem;
-  --text-small: clamp(0.875rem, 0.85rem + 0.12vw, 0.9375rem);
-  --text-body: clamp(1rem, 0.97rem + 0.16vw, 1.0625rem);
-  --text-lead: clamp(1.0625rem, 1rem + 0.4vw, 1.25rem);
-  --text-h4: clamp(1.0625rem, 1.02rem + 0.22vw, 1.1875rem);
-  --text-h3: clamp(1.25rem, 1.13rem + 0.5vw, 1.5rem);
-  --text-h2: clamp(1.95rem, 1.42rem + 2.2vw, 3.15rem);
-  --text-h1: clamp(2.6rem, 1.62rem + 4.1vw, 4.6rem);
-
-  /* ---- shape ---- */
-  --radius-tight: 12px;
-  --radius-card: 18px;
-  --radius-panel: 26px;
-  --radius-hero: 36px;
-
-  --shadow-card: 0 1px 2px rgb(11 37 69 / 0.04), 0 14px 34px -22px rgb(11 37 69 / 0.4);
-  --shadow-lift: 0 2px 4px rgb(11 37 69 / 0.05), 0 26px 50px -26px rgb(11 37 69 / 0.42);
-
-  /* ---- motion ----
-     Exponential ease-out. The stock CSS easings are too weak to read as
-     intentional; these have the punch that makes motion feel deliberate. */
-  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
-  --ease-in-out-strong: cubic-bezier(0.77, 0, 0.175, 1);
-}
-
-/* Container: 1240px → 1488px (20% wider, as requested) */
-@theme {
-  --container-page: 1488px;
-}
+@import "./brand.css";
 
 /* ==========================================================================
    Base
@@ -140,6 +79,19 @@
   clip-path: path(
     "M4 4h1.1a3.4 3.4 0 1 1 5.8 0H12a4 4 0 0 1 4 4v3a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V8a4 4 0 0 1 4-4Z"
   );
+}
+
+/* The select chevron. A data: URI cannot read a custom property, so the stroke
+   colour (--color-muted, %234C6383) is baked in and this is the one place it
+   exists. Rebranding: re-encode the stroke to the new muted value here. */
+@utility select-chevron {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%234C6383%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E");
+  background-position: right 0.9rem center;
+  background-repeat: no-repeat;
+  background-size: 17px;
+  /* No padding here: the shared control class sets px-3.5 and would win on
+     ordering, leaving the chevron on top of the text. The select carries its
+     own pr-10 instead. */
 }
 
 /* Screen-reader-only */

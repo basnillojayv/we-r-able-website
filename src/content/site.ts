@@ -5,6 +5,67 @@ import type { IconName } from '@/components/Icon';
    statistics, testimonials, registration numbers or years-in-business.
    ========================================================================== */
 
+/* Section headings and intros. These used to be typed straight into the JSX,
+   which meant a rebrand touched fourteen component files. They live here so
+   that restyling the template is two files: this one and app/brand.css.
+
+   `titleAccent` is the trailing fragment that renders in the accent colour —
+   the components split the heading rather than accepting markup, so no copy
+   here is ever interpreted as HTML. */
+export const sections = {
+  trust: { title: 'What WE R ABLE stands for' }, // visually hidden
+  about: {
+    title: 'Everyone has the ability to live a fulfilling life.',
+    intro:
+      'WE R ABLE is a registered NDIS disability support provider committed to putting ' +
+      'participants first. We provide personalised support that promotes independence, ' +
+      'inclusion and choice, helping people with disability participate more fully in their ' +
+      'communities and everyday lives.',
+  },
+  values: { title: 'Our purpose, in plain words.' },
+  services: {
+    title: 'How We Can Support You',
+    intro: 'Nine NDIS supports, designed around individual needs, goals and everyday life.',
+  },
+  how: {
+    title: 'Support That Starts With',
+    titleAccent: 'You.',
+    intro:
+      'Your goals, choices and independence are at the heart of everything we do — from the ' +
+      'first conversation onwards.',
+  },
+  videos: {
+    title: 'Understanding the NDIS',
+    intro:
+      'Two short explainers published by the NDIA and the NDIS Quality and Safeguards ' +
+      'Commission, and a look at our own team at work.',
+  },
+  areas: {
+    title: 'Proudly Supporting Metro Melbourne',
+    intro:
+      'WE R ABLE supports participants across a growing number of suburbs and localities ' +
+      'throughout Melbourne.',
+  },
+  cta: {
+    title: 'Let’s Make A Difference Together.',
+    intro:
+      'Whether you’re looking for support for yourself or someone you care about, our team ' +
+      'is here to help.',
+  },
+  contact: {
+    title: 'Get in Touch',
+    intro:
+      'Tell us a little about what you need. We’ll get back to you and talk through how we ' +
+      'can help.',
+  },
+  facebook: {
+    title: 'Follow along on Facebook',
+    intro:
+      'Day-to-day updates from our team — activities, community outings and news — are ' +
+      'posted to our page.',
+  },
+} as const;
+
 export const site = {
   name: 'WE R ABLE',
   tagline: 'We Are Able to Make A Difference.',

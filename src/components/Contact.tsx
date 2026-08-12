@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { ContactForm } from './ContactForm';
 import { FacebookIcon, Icon, type IconName } from './Icon';
 import { Reveal } from './Reveal';
-import { site } from '@/content/site';
+import { sections, site } from '@/content/site';
 
 type Row = {
   icon: IconName | 'facebook';
@@ -68,10 +68,9 @@ export function Contact() {
     <section id="contact" className="section-y bg-white">
       <div className="shell">
         <Reveal className="mb-[clamp(2.5rem,4.5vw,4rem)] grid max-w-[62ch] gap-[1.15rem]">
-          <h2>Get in Touch</h2>
+          <h2>{sections.contact.title}</h2>
           <p className="text-lead leading-[1.6] text-muted">
-            Tell us a little about what you need. We&rsquo;ll get back to you and talk through how
-            we can help.
+            {sections.contact.intro}
           </p>
         </Reveal>
 

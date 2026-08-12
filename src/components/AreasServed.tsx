@@ -1,7 +1,7 @@
 import { Button } from './Button';
 import { MelbourneMap } from './MelbourneMap';
 import { Reveal } from './Reveal';
-import { regions, site } from '@/content/site';
+import { regions, sections, site } from '@/content/site';
 
 export function AreasServed() {
   return (
@@ -14,10 +14,9 @@ export function AreasServed() {
             lg:grid-cols-[1fr_0.8fr] lg:grid-rows-[auto_1fr]"
         >
           <Reveal className="grid max-w-[62ch] content-start gap-[1.15rem] lg:col-start-1 lg:row-start-1">
-            <h2>Proudly Supporting Metro Melbourne</h2>
+            <h2>{sections.areas.title}</h2>
             <p className="text-lead leading-[1.6] text-muted">
-              WE R ABLE supports participants across a growing number of suburbs and localities
-              throughout Melbourne.
+              {sections.areas.intro}
             </p>
           </Reveal>
 

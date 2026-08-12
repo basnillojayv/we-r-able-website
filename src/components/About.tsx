@@ -1,18 +1,15 @@
 import Image from 'next/image';
 import { Reveal } from './Reveal';
-import { able } from '@/content/site';
+import { able, sections } from '@/content/site';
 
 export function About() {
   return (
     <section id="about" className="section-y bg-white">
       <div className="shell grid items-start gap-[clamp(2.5rem,5vw,5rem)] lg:grid-cols-[1fr_0.86fr]">
         <Reveal className="grid gap-6">
-          <h2 className="max-w-[15ch]">Everyone has the ability to live a fulfilling life.</h2>
+          <h2 className="max-w-[15ch]">{sections.about.title}</h2>
           <p className="max-w-[56ch] text-lead leading-[1.6] text-muted">
-            WE R ABLE is a registered NDIS disability support provider committed to putting
-            participants first. We provide personalised support that promotes independence,
-            inclusion and choice, helping people with disability participate more fully in their
-            communities and everyday lives.
+            {sections.about.intro}
           </p>
           <figure className="group mt-3 overflow-hidden rounded-panel">
             <Image

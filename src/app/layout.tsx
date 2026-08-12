@@ -42,6 +42,9 @@ export const metadata: Metadata = {
   },
 };
 
+/* Must match --color-cream in brand.css. Next serialises this into a <meta>
+   tag at build time, so it cannot read the custom property; it is the one
+   colour in the app that has to be kept in step by hand. */
 export const viewport: Viewport = { themeColor: '#F7F3EC' };
 
 const schema = {

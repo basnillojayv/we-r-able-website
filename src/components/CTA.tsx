@@ -1,5 +1,6 @@
 import { Button } from './Button';
 import { Reveal } from './Reveal';
+import { sections } from '@/content/site';
 
 export function CTA() {
   return (
@@ -7,11 +8,10 @@ export function CTA() {
       <div className="fold fold-wide shell grid items-center gap-[clamp(1.75rem,4vw,4rem)] md:grid-cols-[1fr_auto]">
         <Reveal>
           <h2 id="cta-title" className="max-w-[16ch] text-ink">
-            Let&rsquo;s Make A Difference Together.
+            {sections.cta.title}
           </h2>
           <p className="mt-4 max-w-[48ch] text-lead leading-[1.55] text-ink/80">
-            Whether you&rsquo;re looking for support for yourself or someone you care about, our
-            team is here to help.
+            {sections.cta.intro}
           </p>
         </Reveal>
         <Reveal delay={90}>

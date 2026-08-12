@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { FacebookIcon, Icon } from './Icon';
-import { site } from '@/content/site';
+import { sections, site } from '@/content/site';
 
 const PAGE_PLUGIN =
   'https://www.facebook.com/plugins/page.php' +
@@ -26,10 +26,9 @@ export function FacebookFeed() {
     <section aria-labelledby="facebook-title" className="section-y bg-cream">
       <div className="shell grid items-start gap-[clamp(2.25rem,4.5vw,4.5rem)] lg:grid-cols-[0.82fr_1fr]">
         <div className="grid gap-[1.15rem]">
-          <h2 id="facebook-title">Follow along on Facebook</h2>
+          <h2 id="facebook-title">{sections.facebook.title}</h2>
           <p className="max-w-[52ch] text-lead leading-[1.6] text-muted">
-            Day-to-day updates from our team — activities, community outings and news — are posted
-            to our page.
+            {sections.facebook.intro}
           </p>
           <a
             href={site.facebook}

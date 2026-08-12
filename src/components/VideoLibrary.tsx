@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { FacebookIcon, Icon } from './Icon';
 import { Reveal } from './Reveal';
-import { videos, site } from '@/content/site';
+import { sections, site, videos } from '@/content/site';
 
 /*
   Click-to-load facades.
@@ -22,10 +22,9 @@ export function VideoLibrary() {
     <section aria-labelledby="videos-title" className="section-y bg-white">
       <div className="shell">
         <Reveal className="mb-[clamp(2.5rem,4.5vw,4rem)] grid items-end gap-[clamp(1.15rem,3vw,3.5rem)] md:grid-cols-[1.05fr_0.95fr]">
-          <h2 id="videos-title">Understanding the NDIS</h2>
+          <h2 id="videos-title">{sections.videos.title}</h2>
           <p className="max-w-[56ch] text-lead leading-[1.6] text-muted">
-            Two short explainers published by the NDIA and the NDIS Quality and Safeguards
-            Commission, and a look at our own team at work.
+            {sections.videos.intro}
           </p>
         </Reveal>
 

@@ -1,16 +1,16 @@
 import { Button } from './Button';
 import { Icon } from './Icon';
 import { Reveal } from './Reveal';
-import { services } from '@/content/site';
+import { sections, services } from '@/content/site';
 
 export function Services() {
   return (
     <section id="services" className="section-y bg-white">
       <div className="shell">
         <Reveal className="mb-[clamp(2.5rem,4.5vw,4rem)] grid items-end gap-[clamp(1.15rem,3vw,3.5rem)] md:grid-cols-[1.05fr_0.95fr]">
-          <h2>How We Can Support You</h2>
+          <h2>{sections.services.title}</h2>
           <p className="max-w-[56ch] text-lead leading-[1.6] text-muted">
-            Nine NDIS supports, designed around individual needs, goals and everyday life.
+            {sections.services.intro}
           </p>
         </Reveal>
 

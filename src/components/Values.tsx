@@ -1,13 +1,13 @@
 import { Icon } from './Icon';
 import { Reveal } from './Reveal';
-import { pillars } from '@/content/site';
+import { pillars, sections } from '@/content/site';
 
 export function Values() {
   return (
     <section aria-labelledby="values-title" className="section-y bg-linear-to-b from-blue-soft to-cream">
       <div className="shell">
         <Reveal className="mb-[clamp(2.5rem,4.5vw,4rem)] max-w-[62ch]">
-          <h2 id="values-title">Our purpose, in plain words.</h2>
+          <h2 id="values-title">{sections.values.title}</h2>
         </Reveal>
 
         <div className="fold fold-wide grid gap-[clamp(1rem,2vw,1.5rem)] lg:grid-cols-3">

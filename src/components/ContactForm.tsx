@@ -127,7 +127,7 @@ export function ContactForm() {
       <div className="grid gap-[1.1rem] sm:grid-cols-2">
         {fields.map((f) => {
           const isBad = invalid[f.name];
-          const border = isBad ? 'border-[#b3235a]' : 'border-line-strong';
+          const border = isBad ? 'border-danger' : 'border-line-strong';
           const shared = {
             id: f.name,
             name: f.name,
@@ -158,7 +158,7 @@ export function ContactForm() {
                 <select
                   {...shared}
                   defaultValue=""
-                  className={`${control} ${border} appearance-none bg-[url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%234C6383%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')] bg-[right_0.9rem_center] bg-no-repeat bg-[length:17px] pr-10`}
+                  className={`${control} ${border} select-chevron appearance-none pr-10`}
                 >
                   <option value="">Please choose…</option>
                   {enquiryTopics.map((t) => (
@@ -178,7 +178,7 @@ export function ContactForm() {
 
               <p
                 id={`${f.name}-error`}
-                className={`items-center gap-1.5 text-[0.8125rem] font-medium text-[#b3235a] ${
+                className={`items-center gap-1.5 text-[0.8125rem] font-medium text-danger ${
                   isBad ? 'flex' : 'hidden'
                 }`}
               >
@@ -198,8 +198,8 @@ export function ContactForm() {
             status ? 'flex' : 'hidden'
           } ${
             status?.state === 'error'
-              ? 'bg-magenta-soft text-[#8e1b47]'
-              : 'bg-blue-soft text-[#10456f]'
+              ? 'bg-magenta-soft text-danger-ink'
+              : 'bg-blue-soft text-info-ink'
           }`}
         >
           {status && <Icon name="info" className="mt-0.5 size-5 shrink-0" />}

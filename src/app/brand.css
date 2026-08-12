@@ -1,0 +1,90 @@
+/* ==========================================================================
+   BRAND — the per-client file
+
+   This is the only file that should change when the template is restyled for a
+   new client. Everything downstream (base, utilities, motion, components) reads
+   these tokens and needs no edit.
+
+   Two values live outside this file and must be kept in step by hand, because
+   neither can read a custom property:
+     - `themeColor` in src/app/layout.tsx  -> match --color-cream
+     - the `select-chevron` data: URI in globals.css -> match --color-muted
+
+   Contrast is a brand constraint here, not an afterthought: every text/surface
+   pair below is checked to WCAG AA, and the ratios in the comments are measured
+   rather than estimated. If you change a colour, re-check the pair.
+   ========================================================================== */
+
+/* ==========================================================================
+   WE R ABLE — design tokens
+   Colour sampled from the brand logo artwork, not guessed.
+   ========================================================================== */
+
+@theme {
+  /* ---- colour ---- */
+  --color-ink: #0b2545;          /* primary navy — body copy, headings        */
+  --color-ink-deep: #071c34;     /* deepest navy — dark sections, footer      */
+  --color-ink-mid: #123765;      /* navy tint for hovers on dark              */
+  --color-muted: #4c6383;        /* secondary copy on light                   */
+  --color-muted-dark: #a8bdd8;   /* secondary copy on navy                    */
+
+  --color-blue: #2576b4;
+  --color-blue-deep: #1f6ba6;    /* clears AA as small text on light          */
+  --color-blue-soft: #e9f1f8;
+  --color-gold: #f7b60e;
+  --color-gold-mid: #b57f07;     /* icon-weight gold on light                 */
+  --color-gold-deep: #8a6108;    /* clears AA as small text on light          */
+  --color-magenta: #c7356c;
+  --color-magenta-soft: #fbecf1;
+  --color-cream: #f7f3ec;
+
+  /* Feedback. Kept apart from the brand accents on purpose: an error must stay
+     legible if a future brand's magenta turns pale, so these are their own
+     tokens rather than aliases. Both -ink variants are darkened to clear AA as
+     small text on their matching soft background. */
+  --color-danger: #b3235a;        /* inline error text on cream        5.75:1 */
+  --color-danger-ink: #8e1b47;    /* error text on magenta-soft        7.66:1 */
+  --color-info-ink: #10456f;      /* status text on blue-soft          8.75:1 */
+
+  /* Tints of the accents that were living as raw hex in components. */
+  --color-gold-bright: #ffc730;   /* gold hover; ink on it            9.87:1 */
+  --color-ink-faint: #c6d6ea;     /* lead copy on the dark hero       11.60:1 */
+
+  --color-line: rgb(11 37 69 / 0.13);
+  --color-line-strong: rgb(11 37 69 / 0.22);
+  --color-line-dark: rgb(233 241 248 / 0.16);
+
+  /* ---- type ---- */
+  /* next/font self-hosts these and exposes the family on the html element */
+  --font-display: var(--font-display-loaded), "Trebuchet MS", system-ui, sans-serif;
+  --font-body: var(--font-body-loaded), ui-sans-serif, system-ui, sans-serif;
+
+  --text-eyebrow: 0.75rem;
+  --text-small: clamp(0.875rem, 0.85rem + 0.12vw, 0.9375rem);
+  --text-body: clamp(1rem, 0.97rem + 0.16vw, 1.0625rem);
+  --text-lead: clamp(1.0625rem, 1rem + 0.4vw, 1.25rem);
+  --text-h4: clamp(1.0625rem, 1.02rem + 0.22vw, 1.1875rem);
+  --text-h3: clamp(1.25rem, 1.13rem + 0.5vw, 1.5rem);
+  --text-h2: clamp(1.95rem, 1.42rem + 2.2vw, 3.15rem);
+  --text-h1: clamp(2.6rem, 1.62rem + 4.1vw, 4.6rem);
+
+  /* ---- shape ---- */
+  --radius-tight: 12px;
+  --radius-card: 18px;
+  --radius-panel: 26px;
+  --radius-hero: 36px;
+
+  --shadow-card: 0 1px 2px rgb(11 37 69 / 0.04), 0 14px 34px -22px rgb(11 37 69 / 0.4);
+  --shadow-lift: 0 2px 4px rgb(11 37 69 / 0.05), 0 26px 50px -26px rgb(11 37 69 / 0.42);
+
+  /* ---- motion ----
+     Exponential ease-out. The stock CSS easings are too weak to read as
+     intentional; these have the punch that makes motion feel deliberate. */
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out-strong: cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+/* Container: 1240px → 1488px (20% wider, as requested) */
+@theme {
+  --container-page: 1488px;
+}

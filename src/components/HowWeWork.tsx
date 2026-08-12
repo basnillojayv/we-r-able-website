@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { Reveal } from './Reveal';
-import { steps } from '@/content/site';
+import { sections, steps } from '@/content/site';
 
 /*
   The one numbered sequence on the page. The numbers are not scaffolding —
@@ -14,11 +14,10 @@ export function HowWeWork() {
         <Reveal className="mb-[clamp(2.5rem,4.5vw,4rem)] grid items-center gap-[clamp(1.75rem,4vw,4rem)] lg:grid-cols-[1fr_0.7fr]">
           <div className="grid gap-[1.15rem]">
             <h2 id="how-title" className="text-cream">
-              Support That Starts With <em className="not-italic text-gold">You.</em>
+              {sections.how.title} <em className="not-italic text-gold">{sections.how.titleAccent}</em>
             </h2>
             <p className="max-w-[56ch] text-lead leading-[1.6] text-muted-dark">
-              Your goals, choices and independence are at the heart of everything we do — from the
-              first conversation onwards.
+              {sections.how.intro}
             </p>
           </div>
           <figure className="group overflow-hidden rounded-panel">

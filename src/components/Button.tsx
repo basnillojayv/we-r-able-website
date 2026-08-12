@@ -17,7 +17,7 @@ const variants: Record<Variant, string> = {
     'bg-ink text-white border-ink hover:bg-ink-mid hover:border-ink-mid ' +
     'hover:-translate-y-0.5 hover:shadow-card',
   gold:
-    'bg-gold text-ink border-gold hover:bg-[#ffc730] hover:border-[#ffc730] ' +
+    'bg-gold text-ink border-gold hover:bg-gold-bright hover:border-gold-bright ' +
     'hover:-translate-y-0.5 hover:shadow-card',
   ghost:
     'bg-transparent text-ink border-line-strong hover:border-ink ' +

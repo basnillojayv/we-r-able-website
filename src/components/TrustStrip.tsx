@@ -1,12 +1,12 @@
 import { Icon } from './Icon';
 import { Reveal } from './Reveal';
-import { trust } from '@/content/site';
+import { sections, trust } from '@/content/site';
 
 export function TrustStrip() {
   return (
     <section aria-labelledby="trust-title" className="relative z-20 -mt-11 max-md:mt-6">
       <h2 id="trust-title" className="sr-only">
-        What WE R ABLE stands for
+        {sections.trust.title}
       </h2>
       <div className="shell">
         <ul
