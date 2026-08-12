@@ -1,6 +1,11 @@
 node_modules
 .next
 out
+
+# Real secrets. .env.example is committed deliberately and holds no values.
+.env
+.env.local
+.env.*.local
 .DS_Store
 *.tsbuildinfo
 next-env.d.ts
