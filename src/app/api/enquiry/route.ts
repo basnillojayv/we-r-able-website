@@ -6,15 +6,19 @@ import { NextResponse } from 'next/server';
   The destination inbox lives here, not in the client bundle, so it is never
   handed to address-harvesting crawlers.
 
-  Two providers, chosen by what is configured:
+  Providers are attempted in order until one accepts.
 
-  1. RESEND_API_KEY set  -> sent through Resend. Preferred: real deliverability,
-     a proper From address, no third party sitting between the visitor and the
-     inbox. Needs a verified sender domain.
-  2. Nothing set         -> forwarded through FormSubmit, which needs no signup
-     and no key. The first submission triggers a one-time activation email to
-     the destination address; until someone clicks that link, nothing is
-     delivered. The response says so rather than pretending it sent.
+  1. RESEND_API_KEY set -> Resend. In production this is the only one that
+     works, so treat it as required rather than preferred. Needs a sender on a
+     domain verified at resend.com/domains: the sandbox onboarding@resend.dev
+     address only ever delivers to the account owner, never to a client inbox.
+
+  2. FormSubmit -> a relay needing no signup, kept for local development only.
+     Verified against production on 2026-08-12: it sits behind Cloudflare and
+     answers a serverless function with a 403 bot interstitial, so it CANNOT
+     deliver from Vercel however it is called. It also needs a one-time
+     activation link clicked in the destination inbox before it sends anything.
+     Do not rely on it as the live fallback.
 */
 
 /* Values pasted into a hosting dashboard pick up stray whitespace, a trailing
@@ -31,6 +35,19 @@ const RESEND_KEY = clean_env(process.env.RESEND_API_KEY);
 
 type Attempt = { provider: 'resend' | 'formsubmit'; ok: boolean; pending?: boolean; detail: string };
 
+/* Upstream failures sometimes answer with a whole HTML page — Cloudflare's
+   interstitial being the one that actually happens here. Collapse that to a
+   readable token so the log stays scannable and the response carries a status
+   rather than a document. */
+const summarise = (status: number, body: string) => {
+  const t = body.trim();
+  if (t.startsWith('<')) {
+    const challenge = /just a moment|cf-browser-verification|attention required/i.test(t);
+    return `${status} ${challenge ? 'blocked by upstream bot protection' : 'HTML error page'}`;
+  }
+  return `${status} ${t.slice(0, 200)}`;
+};
+
 async function viaResend(subject: string, text: string, replyTo: string): Promise<Attempt> {
   try {
     const res = await fetch('https://api.resend.com/emails', {
@@ -45,7 +62,7 @@ async function viaResend(subject: string, text: string, replyTo: string): Promis
     return {
       provider: 'resend',
       ok: res.ok,
-      detail: res.ok ? 'accepted' : `${res.status} ${body.slice(0, 300)}`,
+      detail: res.ok ? 'accepted' : summarise(res.status, body),
     };
   } catch (err) {
     return { provider: 'resend', ok: false, detail: `threw: ${(err as Error).message}` };
@@ -82,7 +99,7 @@ async function viaFormSubmit(origin: string, fields: Record<string, string>): Pr
       provider: 'formsubmit',
       ok: res.ok && (accepted || needsActivation),
       pending: needsActivation,
-      detail: `${res.status} ${parsed.message ?? body.slice(0, 200)}`,
+      detail: parsed.message ? `${res.status} ${parsed.message}` : summarise(res.status, body),
     };
   } catch (err) {
     return { provider: 'formsubmit', ok: false, detail: `threw: ${(err as Error).message}` };
