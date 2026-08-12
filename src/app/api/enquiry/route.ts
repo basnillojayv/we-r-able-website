@@ -30,7 +30,7 @@ const clean_env = (v: string | undefined) =>
   v?.trim().replace(/^["']|["']$/g, '').replace(/[\r\n]/g, '') || undefined;
 
 const TO = clean_env(process.env.ENQUIRY_TO) ?? 'werable.disability@gmail.com';
-const FROM = clean_env(process.env.ENQUIRY_FROM) ?? 'WE R ABLE website <onboarding@resend.dev>';
+const FROM = clean_env(process.env.ENQUIRY_FROM) ?? 'WE R ABLE <onboarding@resend.dev>';
 const RESEND_KEY = clean_env(process.env.RESEND_API_KEY);
 
 type Attempt = { provider: 'resend' | 'formsubmit'; ok: boolean; pending?: boolean; detail: string };
@@ -122,7 +122,10 @@ const clean = (v: unknown, max = 2000) =>
 
 const isEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
 
-function render(d: Required<Omit<Payload, 'company'>>) {
+/* `host` is read off the incoming request rather than written in. The domain is
+   mid-migration and will change again when it moves off Wix, and a hard-coded
+   werable.com.au would quietly start lying the day it does. */
+function render(d: Required<Omit<Payload, 'company'>>, host: string) {
   return [
     `Name:     ${d.firstName} ${d.lastName}`,
     `Email:    ${d.email}`,
@@ -131,7 +134,7 @@ function render(d: Required<Omit<Payload, 'company'>>) {
     '',
     d.message,
     '',
-    '— Sent from the enquiry form on werable.com.au',
+    `— Sent from the enquiry form on ${host}`,
   ].join('\n');
 }
 
@@ -162,11 +165,18 @@ export async function POST(request: Request) {
     );
   }
 
-  const subject = `Website enquiry — ${d.firstName} ${d.lastName} (${d.topic})`;
-  const text = render(d);
-
+  /* Prefer the forwarded host: behind Vercel, request.url is the internal
+     deployment URL, so the visitor-facing domain only appears in the headers.
+     That way the footer names the site the enquirer actually used. */
   const origin =
-    request.headers.get('origin') ?? new URL(request.url).origin;
+    request.headers.get('origin') ??
+    (request.headers.get('x-forwarded-host')
+      ? `https://${request.headers.get('x-forwarded-host')}`
+      : new URL(request.url).origin);
+  const host = new URL(origin).host;
+
+  const subject = `Enquiry — ${d.firstName} ${d.lastName} (${d.topic})`;
+  const text = render(d, host);
 
   /* Try every configured provider rather than committing to the first one. A
      misconfigured Resend key used to abort the whole request; now it falls
