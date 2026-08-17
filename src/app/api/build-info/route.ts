@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server'
+import { editingConfigured } from '@/lib/editorAuth'
+import { editorBranch, editorRepoSource } from '@/lib/editorRepo'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -6,10 +8,10 @@ export const dynamic = 'force-dynamic'
 /**
  * Which commit this deployment was built from.
  *
- * Saving commits to `main` and the site rebuilds, so "is my change live yet?"
- * is answerable by asking the site what it was built from and watching for it
- * to change. Read at build time and frozen into the bundle — that is precisely
- * what makes it a usable stamp.
+ * Saving commits to the branch and the site rebuilds, so "is my change live
+ * yet?" is answerable by asking the site what it was built from and watching
+ * for it to change. Read at build time and frozen into the bundle — that is
+ * precisely what makes it a usable stamp.
  *
  * `null` in local development, where nothing is deployed and nothing rebuilds.
  * The toolbar treats that as "cannot tell", which is the truth.
@@ -18,35 +20,30 @@ const BUILT_FROM = process.env.VERCEL_GIT_COMMIT_SHA ?? null
 
 export function GET() {
   /**
-   * Whether this deployment was actually given its configuration.
+   * Whether this deployment can actually do the job.
    *
    * WHY THIS IS WORTH REPORTING
-   * "Editing is not set up on this site yet" is one message for three
-   * different causes: the password missing, the signing secret missing, or the
-   * secret being present but too short to sign with — which fails in exactly
-   * the same way while looking correctly configured in the dashboard. From
-   * outside the deployment there is no way to tell which, and the obvious
-   * guess (that the variables were never added) is wrong as often as it is
-   * right, because they may have been added without redeploying.
+   * Setup failures here are invisible from the outside and identical from the
+   * inside: a missing token and a missing repository both surface as one
+   * sentence at Save, after someone has already done the work. This turns
+   * "it does not work" into a question with an answer.
    *
-   * Booleans only, never values. It reveals that the site has an editor, which
-   * `/edit` already announces, and nothing that helps anyone get into it.
-   *
-   * Read per request rather than at module scope, so it describes the running
-   * function rather than the moment it was built.
+   * Booleans and a source name, never values. `repo` says *where the answer
+   * came from* rather than what it is — enough to tell whether the derivation
+   * from Vercel's own git variables worked, without publishing the name of a
+   * repository that may be private.
    */
-  const secret = process.env.EDITOR_SESSION_SECRET ?? ''
-
   return NextResponse.json(
     {
       sha: BUILT_FROM,
       configured: {
-        password: Boolean(process.env.EDITOR_PASSWORD),
-        secret: Boolean(secret),
-        /** Under 32 characters is refused, and fails identically to missing. */
-        secretLongEnough: secret.length >= 32,
-        /** Only needed to publish; sign-in works without it. */
+        /** EDITOR_PASSWORD. The signing key is derived from it. */
+        password: editingConfigured(),
+        /** GITHUB_TOKEN. Without it the editor can edit but never save. */
         publishing: Boolean(process.env.GITHUB_TOKEN),
+        /** 'vercel' means nothing had to be configured. */
+        repo: editorRepoSource(),
+        branch: editorBranch(),
       },
     },
     { headers: { 'Cache-Control': 'no-store' } },

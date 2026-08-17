@@ -1,14 +1,12 @@
 import { NextResponse } from 'next/server'
 import { createHash } from 'node:crypto'
 import { getEditor } from '@/lib/editorAuth'
+import { editorBranch, editorRepo } from '@/lib/editorRepo'
 import { UPLOAD_DIR, isUploadablePath } from '@/lib/uploads'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-// INSTALL: set EDITOR_REPO to "owner/name".
-const REPO = process.env.EDITOR_REPO ?? ''
-const BRANCH = process.env.EDITOR_BRANCH ?? 'main'
 
 /**
  * 8MB before encoding. Large enough for any photograph a phone produces,
@@ -59,7 +57,7 @@ export async function POST(request: Request) {
   const { canEdit } = await getEditor()
   if (!canEdit) return fail(403, 'Not allowed.')
 
-  if (!process.env.GITHUB_TOKEN || !REPO) {
+  if (!process.env.GITHUB_TOKEN || !editorRepo()) {
     return fail(503, 'Publishing is not set up on this site yet.')
   }
 
@@ -107,7 +105,7 @@ export async function POST(request: Request) {
     return fail(400, 'That filename could not be used.')
   }
 
-  const response = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`, {
+  const response = await fetch(`https://api.github.com/repos/${editorRepo()}/contents/${path}`, {
     method: 'PUT',
     cache: 'no-store',
     headers: {
@@ -119,7 +117,7 @@ export async function POST(request: Request) {
     body: JSON.stringify({
       message: `Add photograph ${url} from the in-place editor`,
       content: bytes.toString('base64'),
-      branch: BRANCH,
+      branch: editorBranch(),
     }),
   })
 

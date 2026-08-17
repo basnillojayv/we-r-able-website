@@ -16,12 +16,13 @@ import { cookies } from 'next/headers'
  *   The defence is passphrase entropy, not a lockout. Use five words, not a
  *   short password.
  * - **No revocation list.** There is nowhere to record that a cookie is dead.
- *   Signing everyone out means rotating EDITOR_SESSION_SECRET, after which
- *   every outstanding cookie fails verification on the next request.
+ *   Signing everyone out means changing EDITOR_PASSWORD, after which every
+ *   outstanding cookie fails verification on the next request — because the
+ *   signing key is derived from it.
  * - **The password is stored in plaintext in the environment.** Hashing it
- *   would protect nothing: the same environment holds the signing secret, and
- *   anyone holding that can mint a valid cookie without knowing the password
- *   at all.
+ *   would protect nothing here: the cookie's signing key is derived from the
+ *   password, so anyone who can read the environment can mint a valid session
+ *   whether or not they can reverse a hash.
  *
  * IMPORTANT: this module calls `cookies()`, a Dynamic API. It must be imported
  * *only* by route handlers and server actions — never by anything reachable
@@ -39,19 +40,70 @@ const TTL_MS = 12 * 60 * 60 * 1000
 const VERSION = 'v1'
 const encoder = new TextEncoder()
 
-async function signingKey(): Promise<CryptoKey | null> {
-  const secret = process.env.EDITOR_SESSION_SECRET
-  // A short secret is a misconfiguration, not a weak setting — refuse it
-  // rather than sign with it.
-  if (!secret || secret.length < 32) return null
+/**
+ * Derived once. The environment does not change under a running function, and
+ * HKDF on every cookie check would be work for nothing.
+ */
+let cachedKey: Promise<CryptoKey | null> | null = null
 
-  return crypto.subtle.importKey(
-    'raw',
-    encoder.encode(secret),
-    { name: 'HMAC', hash: 'SHA-256' },
+/**
+ * The key the session cookie is signed with.
+ *
+ * Derived from EDITOR_PASSWORD unless EDITOR_SESSION_SECRET is set explicitly.
+ * That removes a second variable, and with it the trap it carried: a secret
+ * shorter than 32 characters used to be refused and fail *identically* to one
+ * that was missing, while looking perfectly set in the dashboard.
+ *
+ * Deriving is sound here because the password is the only credential anyway —
+ * anyone holding it can sign in and mint their own cookie, so a separate secret
+ * protected nothing that was not already lost. It has to be high-entropy for
+ * that reason regardless; there is no rate limiting to fall back on.
+ *
+ * A welcome consequence: changing the password now invalidates every
+ * outstanding session, which is what "sign everyone out" should mean and
+ * previously took rotating a second value.
+ *
+ * The salt is fixed and not secret. HKDF wants a salt for domain separation,
+ * not for secrecy, and the input keying material already carries the entropy.
+ */
+async function deriveKey(): Promise<CryptoKey | null> {
+  const explicit = process.env.EDITOR_SESSION_SECRET?.trim()
+
+  if (explicit) {
+    if (explicit.length < 32) return null
+    return crypto.subtle.importKey(
+      'raw',
+      encoder.encode(explicit),
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['sign', 'verify'],
+    )
+  }
+
+  const password = process.env.EDITOR_PASSWORD
+  if (!password) return null
+
+  const material = await crypto.subtle.importKey('raw', encoder.encode(password), 'HKDF', false, [
+    'deriveKey',
+  ])
+
+  return crypto.subtle.deriveKey(
+    {
+      name: 'HKDF',
+      hash: 'SHA-256',
+      salt: encoder.encode('inline-editor-git/session/v1'),
+      info: encoder.encode('cookie-signing'),
+    },
+    material,
+    { name: 'HMAC', hash: 'SHA-256', length: 256 },
     false,
     ['sign', 'verify'],
   )
+}
+
+function signingKey(): Promise<CryptoKey | null> {
+  cachedKey ??= deriveKey()
+  return cachedKey
 }
 
 /**
@@ -143,8 +195,12 @@ export const cookieOptions = {
   maxAge: TTL_MS / 1000,
 }
 
+/**
+ * One value, not two. The signing key comes from the password unless an
+ * explicit EDITOR_SESSION_SECRET overrides it.
+ */
 export function editingConfigured(): boolean {
-  return Boolean(process.env.EDITOR_PASSWORD && process.env.EDITOR_SESSION_SECRET)
+  return Boolean(process.env.EDITOR_PASSWORD)
 }
 
 /**
