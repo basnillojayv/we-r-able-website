@@ -48,7 +48,10 @@ export function Footer() {
           </nav>
 
           <div>
+            {/* "Contact" is also a nav label. Skipped so the nav's own copy
+                keeps its binding and this heading cannot steal it. */}
             <h2
+              data-edit-skip
               id="footer-contact-title"
               className="mb-[1.1rem] font-body text-[0.75rem] font-bold uppercase
                 tracking-[0.14em] text-cream"
@@ -82,7 +85,9 @@ export function Footer() {
         </div>
 
         <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 pt-7 text-[0.8125rem]">
-          <p>© {new Date().getFullYear()} {site.name}. All Rights Reserved.</p>
+          {/* Four fragments, one of them the year. `site.name` is also
+              videos[2].credit — left matchable, the two would cross-wire. */}
+          <p data-edit-skip>© {new Date().getFullYear()} {site.name}. All Rights Reserved.</p>
           <p>
             <span aria-hidden className="mr-2 inline-block size-1.5 rounded-full bg-gold align-[0.12em]" />
             NDIS Registered Provider

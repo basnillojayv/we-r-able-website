@@ -1,3 +1,5 @@
+import { Fragment } from 'react';
+import { hero } from '@/content/site';
 import { Button } from './Button';
 import { HeroVideo } from './HeroVideo';
 
@@ -34,15 +36,15 @@ export function Hero() {
           <p className="hero-rise inline-flex items-center gap-2.5 text-eyebrow font-semibold
             uppercase tracking-[0.14em] text-gold">
             <span aria-hidden className="puzzle-tab" />
-            NDIS Registered Disability Support Provider
+            {hero.eyebrow}
           </p>
 
           <h1 className="hero-rise text-cream [--d:80ms]">
-            We Are Able
+            {hero.titleLine1}
             <br />
-            To Make A{' '}
+            {hero.titleLine2}{' '}
             <span className="relative whitespace-nowrap text-gold">
-              Difference.
+              {hero.titleAccent}
               <span
                 aria-hidden
                 className="absolute -bottom-[0.11em] left-0 right-0 h-[5px] origin-left
@@ -52,13 +54,12 @@ export function Hero() {
           </h1>
 
           <p className="hero-rise max-w-[46ch] text-lead leading-[1.6] text-ink-faint [--d:160ms]">
-            Personalised support that empowers people with disability to live with greater
-            independence, confidence and choice.
+            {hero.lede}
           </p>
 
           <div className="hero-rise flex flex-wrap gap-3 [--d:240ms]">
-            <Button href="#contact" variant="gold" className="max-sm:w-full">
-              Get in Touch
+            <Button href="#contact" variant="gold" className="max-sm:w-full" data-edit-skip>
+              {hero.ctaPrimary}
             </Button>
             <Button
               href="#services"
@@ -66,7 +67,7 @@ export function Hero() {
               icon="arrowDown"
               className="max-sm:w-full"
             >
-              Explore Our Services
+              {hero.ctaSecondary}
             </Button>
           </div>
 
@@ -84,12 +85,21 @@ export function Hero() {
           lg:rounded-card lg:bg-cream lg:px-[1.45rem] lg:py-[1.05rem] lg:shadow-lift"
       >
         <strong className="font-display text-[1.0625rem] tracking-[-0.015em] text-cream lg:text-ink">
-          Participant-first support
+          {hero.badgeTitle}
         </strong>
         <span className="block text-[0.8125rem] font-semibold uppercase tracking-[0.06em]
           text-muted-dark lg:mt-1 lg:text-muted">
-          Care <i className="not-italic text-magenta">•</i> Respect{' '}
-          <i className="not-italic text-magenta">•</i> Empowerment
+          {hero.badgeWords.map((word, i) => (
+            <Fragment key={word.text}>
+              {i > 0 ? (
+                <>
+                  {' '}
+                  <i className="not-italic text-magenta">•</i>{' '}
+                </>
+              ) : null}
+              {word.text}
+            </Fragment>
+          ))}
         </span>
       </div>
     </section>

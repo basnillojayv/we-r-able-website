@@ -1,0 +1,210 @@
+/* =========================================================================
+   INLINE EDITOR — styles
+   Installed by the inline-editor skill. Import once from your global
+   stylesheet:  @import "./editor.css";
+
+   Every custom property below carries a fallback, so this renders sensibly in
+   a project that does not share this design system. Where your project does
+   define the token, yours wins. Two of them (--radius-pill, --radius-sm) are
+   used but undefined in the project this came from, which is why the toolbar
+   was square-cornered there — the fallbacks fix that.
+   ========================================================================= */
+
+/* Auto-wrapped fields. `display: contents` means the wrapper takes no part in
+   layout at all — the text sits in its parent exactly as if the span were not
+   there — so wrapping every string costs nothing visually until edit mode is
+   on. Without this, spans inside flex containers become flex items and
+   :first-child rules quietly stop matching. */
+.editable-auto{display:contents}
+.editable-auto.is-editable{display:inline}
+
+/* An editable region, while edit mode is on. A dashed outline rather than a
+   filled background: it marks the boundary without changing how the type sits,
+   so what the client edits still looks like what visitors will see. */
+.is-editable{outline:2px dashed var(--accent-400, #4FC3E8);outline-offset:4px;border-radius:var(--radius-sm, 10px);
+  cursor:text;transition:outline-color .18s var(--ease, cubic-bezier(.22,.61,.36,1)),background .18s var(--ease, cubic-bezier(.22,.61,.36,1))}
+.is-editable:hover{background:color-mix(in srgb,var(--accent-400, #4FC3E8) 10%,transparent)}
+.is-editable:focus{outline:2px solid var(--accent, #00708F);outline-offset:4px;
+  background:color-mix(in srgb,var(--accent-400, #4FC3E8) 14%,transparent)}
+
+.edit-bar{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:400;
+  display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;justify-content:center;
+  max-width:calc(100vw - 24px);
+  background:var(--brand-dark, #262A28);color:#fff;border-radius:var(--radius-pill, 100px);
+  padding:.55rem .7rem;box-shadow:var(--shadow-lg, 0 40px 90px rgba(20,23,22,.24))}
+
+/* The live indicator. Green while edit mode is on, and dim otherwise, so the
+   answer to "am I editing?" is available without reading a label — which is
+   what stops someone typing into the page by accident. */
+.edit-bar__dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto;margin-inline:.45rem .1rem;
+  background:rgba(255,255,255,.28);transition:background .2s var(--ease, cubic-bezier(.22,.61,.36,1)),box-shadow .2s var(--ease, cubic-bezier(.22,.61,.36,1))}
+.edit-bar__dot.is-on{background:#46D17F;box-shadow:0 0 0 4px rgba(70,209,127,.18)}
+
+.edit-bar__btn{font-family:var(--font-cond, inherit);font-weight:600;font-size:.82rem;
+  text-transform:uppercase;letter-spacing:.06em;color:#fff;
+  /* 44px minimum: this is a real control and the same tap-target rule applies
+     to admin UI as to everything else. */
+  min-height:44px;padding:0 1.05rem;border-radius:var(--radius-pill, 100px);
+  display:inline-flex;align-items:center;white-space:nowrap;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);
+  transition:background .18s var(--ease, cubic-bezier(.22,.61,.36,1)),transform .16s var(--ease, cubic-bezier(.22,.61,.36,1))}
+.edit-bar__btn:hover:not(:disabled){background:rgba(255,255,255,.20)}
+.edit-bar__btn:active:not(:disabled){transform:scale(.97)}
+.edit-bar__btn:disabled{opacity:.4;cursor:not-allowed}
+
+.edit-bar__btn.is-on{background:var(--accent, #00708F);border-color:transparent;color:#fff}
+
+.edit-bar__status{font-size:.8rem;color:rgba(255,255,255,.78);padding-inline:.5rem;
+  max-width:26ch;line-height:1.35}
+.edit-bar__status:empty{display:none}
+
+@media (max-width:640px){
+  .edit-bar{left:12px;right:12px;transform:none;border-radius:var(--radius-lg, 22px)}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .edit-bar__btn,.edit-bar__dot,.is-editable{transition:none}
+  .edit-bar__btn:active:not(:disabled){transform:none}
+}
+
+/* --- Regions that are picked rather than typed ----------------------------
+   A photograph or an icon cannot show a caret, so it shows that it is
+   available instead: a dashed accent outline while edit mode is on, and the
+   pointer that says this responds to a click. */
+.is-editable-region{outline:2px dashed var(--accent, #00708F);outline-offset:3px;cursor:pointer;
+  transition:outline-color .18s var(--ease, cubic-bezier(.22,.61,.36,1))}
+.is-editable-region:hover{outline-color:var(--accent-bright, #0086AD);outline-style:solid}
+
+/* The badges that stand in for clicking a photograph. The ghosted images are
+   painted at z-index:-2, behind their own section, so they never receive a
+   click — this layer sits above everything instead. */
+.edit-spots{position:fixed;inset:0;z-index:450;pointer-events:none}
+.edit-spot{position:fixed;pointer-events:auto;
+  font-family:var(--font-cond, inherit);font-weight:600;font-size:.72rem;
+  text-transform:uppercase;letter-spacing:.06em;color:#fff;
+  min-height:34px;padding:0 .75rem;border-radius:var(--radius-pill, 100px);
+  display:inline-flex;align-items:center;white-space:nowrap;
+  background:var(--brand-dark, #262A28);border:1px solid rgba(255,255,255,.28);
+  box-shadow:var(--shadow-md, 0 16px 40px rgba(38,42,40,.10));transition:background .16s var(--ease, cubic-bezier(.22,.61,.36,1))}
+.edit-spot:hover{background:var(--accent, #00708F)}
+
+.edit-pick{position:fixed;inset:0;z-index:500;display:grid;place-items:center;padding:16px}
+.edit-pick__scrim{position:absolute;inset:0;background:rgba(20,23,22,.55)}
+.edit-pick__panel{position:relative;width:min(560px,100%);max-height:min(80vh,720px);
+  overflow:auto;background:#fff;border-radius:var(--radius-lg, 22px);
+  padding:1.3rem;box-shadow:var(--shadow-lg, 0 40px 90px rgba(20,23,22,.24))}
+
+.edit-pick__head{display:flex;align-items:center;justify-content:space-between;gap:1rem;
+  margin-bottom:1rem}
+.edit-pick__title{font-family:var(--font-display, inherit);font-weight:400;font-size:1.5rem;
+  color:var(--brand-dark, #262A28);letter-spacing:normal}
+.edit-pick__close{min-width:44px;min-height:44px;border-radius:50%;color:var(--muted, #5A625E);
+  display:inline-grid;place-items:center;font-size:1rem}
+.edit-pick__close:hover{background:var(--surface-100, #FBFAF7);color:var(--brand-dark, #262A28)}
+
+/* auto-fill, so the grid keeps its shape whether the library holds 4
+   photographs or 40. */
+.edit-pick__grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:.6rem}
+.edit-pick__shot{border-radius:10px;overflow:hidden;aspect-ratio:4/3;width:100%;
+  border:2px solid transparent;background:var(--surface-100, #FBFAF7);transition:border-color .16s var(--ease, cubic-bezier(.22,.61,.36,1))}
+.edit-pick__shot img{width:100%;height:100%;object-fit:cover;display:block}
+.edit-pick__shot:hover{border-color:var(--line, #DDD7CB)}
+.edit-pick__shot.is-on{border-color:var(--accent, #00708F)}
+
+.edit-pick__icons{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:.6rem}
+.edit-pick__icon{display:flex;flex-direction:column;align-items:center;gap:.45rem;
+  min-height:88px;padding:.8rem .5rem;border-radius:10px;border:2px solid var(--line, #DDD7CB);
+  color:var(--muted, #5A625E);font-size:.8rem;text-align:center;transition:border-color .16s var(--ease, cubic-bezier(.22,.61,.36,1))}
+.edit-pick__icon svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.6;
+  stroke-linecap:round;stroke-linejoin:round}
+.edit-pick__icon:hover{border-color:var(--muted-light, #6B736E)}
+.edit-pick__icon.is-on{border-color:var(--accent, #00708F);color:var(--accent, #00708F)}
+
+.edit-pick__alt{display:flex;flex-direction:column;gap:.4rem;margin-top:1.1rem}
+.edit-pick__alt label{font-family:var(--font-cond, inherit);font-weight:600;font-size:.82rem;
+  text-transform:uppercase;letter-spacing:.06em;color:var(--muted, #5A625E)}
+.edit-pick__alt input{font:inherit;font-size:1rem;color:var(--brand-dark, #262A28);background:var(--surface-100, #FBFAF7);
+  border:1.5px solid var(--line, #DDD7CB);border-radius:11px;padding:.85rem 1rem;width:100%;
+  transition:border-color .18s,background .18s,box-shadow .18s}
+.edit-pick__alt input:focus{border-color:var(--accent, #00708F);background:#fff;
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--accent, #00708F) 12%,transparent);outline:none}
+
+.edit-pick__note{font-size:.82rem;color:var(--muted-light, #6B736E);line-height:1.5;margin-top:.6rem}
+.edit-pick__note--error{color:var(--accent-bright, #0086AD);font-weight:600}
+
+/* The input itself is never shown: a file input cannot be styled to match
+   anything, and its label is a perfectly good button. Hidden by clipping
+   rather than display:none, so it stays focusable from the keyboard. */
+.edit-pick__upload{margin-top:1.1rem;padding-top:1.1rem;border-top:1.5px solid var(--line, #DDD7CB)}
+.edit-pick__upload input[type=file]{position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.edit-pick__upload label{display:inline-flex;align-items:center;justify-content:center;cursor:pointer;
+  font-family:var(--font-cond, inherit);font-weight:600;font-size:.86rem;letter-spacing:.02em;
+  color:var(--brand-dark, #262A28);background:var(--surface-100, #FBFAF7);
+  border:1.5px solid var(--line, #DDD7CB);border-radius:var(--radius-pill, 100px);
+  padding:.6rem 1.15rem;transition:border-color .18s,background .18s,color .18s}
+.edit-pick__upload label:hover{border-color:var(--accent, #00708F);color:var(--accent, #00708F)}
+.edit-pick__upload input[type=file]:focus-visible + label{border-color:var(--accent, #00708F);
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--accent, #00708F) 12%,transparent)}
+
+.edit-pick__done{margin-top:1.2rem;width:100%}
+
+@media (prefers-reduced-motion:reduce){
+  .is-editable-region,.edit-pick__shot,.edit-pick__icon,.edit-spot{transition:none}
+}
+
+/* --- The sign-in panel at /edit -------------------------------------------
+   A client who signs in here should recognise the same site they are about to
+   edit — a login screen that looks like a separate product is how an admin
+   panel gets to feel like somewhere else.
+
+   The shipped stylesheet borrowed .form, .field and .btn from the host site,
+   which is right when the host has them. This one is built from Tailwind
+   utilities and has no such component classes, so the panel rendered with a
+   bare browser input and an unstyled button — the client's first impression of
+   the tool, looking broken. They are defined here instead, scoped under
+   .edit-login so nothing global is claimed and no site class is shadowed. */
+/* 80px clear above the panel, so the sign-in sits away from the header rather
+   than tucked under it. Applied to the holding line too, or the panel would
+   jump down the moment the "are you already signed in?" answer arrives.
+   The same on every width, by request.
+
+   This collapses through .wrap, which has no top padding, and comes to rest
+   inside .section--tight's padding box — that padding is what stops it
+   collapsing any further up. */
+.edit-login{max-width:26rem;margin-inline:auto;margin-block-start:80px;text-align:left}
+.edit-login__eyebrow{font-family:var(--font-cond, inherit);font-weight:600;font-size:.82rem;
+  text-transform:uppercase;letter-spacing:.1em;color:var(--accent, #00708F);margin-bottom:.5rem}
+.edit-login__title{font-family:var(--font-display, inherit);font-weight:400;font-size:2.2rem;
+  color:var(--brand-dark, #262A28);letter-spacing:normal;line-height:1.15;margin-bottom:.6rem}
+.edit-login__lede{color:var(--muted, #5A625E);line-height:1.6;margin-bottom:1.6rem}
+.edit-login .form{display:flex;flex-direction:column;gap:1rem}
+.edit-login .field{display:flex;flex-direction:column;gap:.4rem}
+.edit-login .field label{font-family:var(--font-cond, inherit);font-weight:600;font-size:.82rem;
+  text-transform:uppercase;letter-spacing:.06em;color:var(--muted, #5A625E)}
+.edit-login .field input{font:inherit;font-size:1rem;width:100%;padding:.85rem 1rem;
+  color:var(--brand-dark, #262A28);background:var(--surface-100, #FBFAF7);
+  border:1.5px solid var(--line, #DDD7CB);border-radius:11px;
+  transition:border-color .18s,background .18s,box-shadow .18s}
+.edit-login .field input:focus{border-color:var(--accent, #00708F);background:#fff;outline:none;
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--accent, #00708F) 12%,transparent)}
+
+.edit-login .btn{font:inherit;font-family:var(--font-cond, inherit);font-weight:600;font-size:1rem;
+  display:inline-flex;align-items:center;justify-content:center;cursor:pointer;
+  padding:.9rem 1.4rem;border:1.5px solid transparent;border-radius:var(--radius-pill, 100px);
+  color:#fff;background:var(--brand-dark, #262A28);
+  transition:background .18s,border-color .18s,transform .12s}
+.edit-login .btn:hover:not(:disabled){background:var(--accent, #00708F)}
+.edit-login .btn:active:not(:disabled){transform:scale(.985)}
+.edit-login .btn:disabled{opacity:.55;cursor:default}
+.edit-login .btn--block{width:100%}
+
+/* Errors read as a problem, not as decoration: the accent is used everywhere
+   else on this panel, so the message needs its own weight instead. */
+.edit-login .form__error{font-size:.9rem;font-weight:600;color:#a12b12;margin:0}
+.edit-login .form__note{text-align:left;margin-top:1.2rem;font-size:.86rem;line-height:1.55;
+  color:var(--muted-light, #6B736E)}
+
+/* Holding line while "are you already signed in?" is answered. Centred on the
+   same axis as the panel it replaces, so the swap does not jump. */
+.edit-login__wait{max-width:26rem;margin-inline:auto;margin-block-start:80px;color:var(--muted-light, #6B736E)}

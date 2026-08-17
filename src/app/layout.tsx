@@ -1,6 +1,10 @@
 import type { Metadata, Viewport } from 'next';
 import { Bricolage_Grotesque, Inter_Tight } from 'next/font/google';
 import './globals.css';
+// Its own file, so updating the editor later never means picking its rules
+// back out of the site's own styles. Every custom property has a fallback.
+import './editor.css';
+import { EditorMount } from './components/EditorMount';
 import { site } from '@/content/site';
 
 /* Self-hosted by next/font at build time: no render-blocking request to
@@ -88,6 +92,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to main content
         </a>
         {children}
+        {/* Renders nothing for a visitor: its one request comes back
+            {"canEdit":false}. Last in the body so the toolbar sits at the end
+            of tab order rather than between the skip link and the page. */}
+        <EditorMount />
       </body>
     </html>
   );

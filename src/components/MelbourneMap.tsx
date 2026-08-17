@@ -7,6 +7,7 @@
 export function MelbourneMap({ className = '' }: { className?: string }) {
   return (
     <svg
+      data-edit-skip
       viewBox="60 26 400 556"
       role="img"
       aria-label="Stylised map of Greater Melbourne showing Port Phillip Bay, with WE R ABLE based at Caroline Springs and support delivered across the metropolitan area."

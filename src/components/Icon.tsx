@@ -162,6 +162,24 @@ const paths = {
 
 export type IconName = keyof typeof paths;
 
+/**
+ * The same names, available at runtime.
+ *
+ * `IconName` is erased at compile time, so the icon picker at /edit — which
+ * has to offer a list of choices — cannot read it. This is that list, derived
+ * from the map rather than written out beside it, so the two cannot drift.
+ */
+export const iconNames = Object.keys(paths) as IconName[];
+
+/**
+ * A real check, because `Icon` does `paths[name]` with no fallback: an unknown
+ * name renders `<svg>{undefined}</svg>` — an invisible icon, not an error. A
+ * bad value should fail the build, where the last good deployment stays live,
+ * rather than quietly removing a glyph from a card.
+ */
+export const isIconName = (value: string): value is IconName =>
+  Object.hasOwn(paths, value);
+
 /* Facebook is a brand glyph — filled, not part of the stroke system. */
 export function FacebookIcon(props: SVGProps<SVGSVGElement>) {
   return (

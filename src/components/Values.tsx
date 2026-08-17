@@ -47,7 +47,10 @@ export function Values() {
                 {pillar.values && (
                   <ul className="mt-0.5 flex flex-wrap gap-1.5">
                     {pillar.values.map((v) => (
+                      // Derived from able[].word, so this is a mirror: edit
+                      // the word in About and this follows on the next build.
                       <li
+                        data-edit-skip
                         key={v}
                         className="rounded-full border border-line px-3 py-1 text-[0.8125rem]
                           font-semibold transition-colors duration-200 hover:border-gold hover:bg-gold/10"

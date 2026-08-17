@@ -69,7 +69,10 @@ export function VideoLibrary() {
                       className="absolute inset-0 grid size-full cursor-pointer place-items-center"
                     >
                       {video.thumb ? (
+                        // A photograph carries no text to match on, so it says
+                        // which field it is rendering.
                         <Image
+                          data-edit-key={`copy.videos.${i}.thumb`}
                           src={video.thumb}
                           alt=""
                           aria-hidden
@@ -99,7 +102,11 @@ export function VideoLibrary() {
                       >
                         <Icon name="play" className="ml-1 size-6" />
                       </span>
-                      <span className="sr-only">
+                      {/* Skipped: this repeats the title and the source, and
+                          comes BEFORE the visible heading in document order —
+                          so without it both would bind to text nobody can
+                          see. */}
+                      <span className="sr-only" data-edit-skip>
                         Play “{video.title}” — loads from {video.source}
                       </span>
                     </button>

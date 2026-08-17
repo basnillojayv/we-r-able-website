@@ -5,7 +5,9 @@ import { sections, trust } from '@/content/site';
 export function TrustStrip() {
   return (
     <section aria-labelledby="trust-title" className="relative z-20 -mt-11 max-md:mt-6">
-      <h2 id="trust-title" className="sr-only">
+      {/* Visually hidden, so not offered — editing it would change nothing
+          the editor can see. */}
+      <h2 id="trust-title" className="sr-only" data-edit-skip>
         {sections.trust.title}
       </h2>
       <div className="shell">

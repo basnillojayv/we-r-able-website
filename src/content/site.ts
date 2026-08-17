@@ -1,85 +1,54 @@
-import type { IconName } from '@/components/Icon';
+import { isIconName, type IconName } from '@/components/Icon';
+import copy from '@/content/copy.json';
 
 /* ==========================================================================
    Every fact here comes from werable.com.au. Nothing is invented — no
    statistics, testimonials, registration numbers or years-in-business.
+
+   THE WORDS LIVE IN copy.json; THE STRUCTURE LIVES HERE.
+
+   The in-place editor at /edit rewrites copy.json and commits it. It rewrites
+   JSON and only JSON — regenerating this file would mean generating
+   TypeScript, which cannot survive a round trip with its `as const`, its type
+   import and these comments intact.
+
+   The split is not tidiness. Anything the code *branches on* stays in
+   TypeScript, out of the editor's reach: a Tailwind class, a CSS custom
+   property, an anchor target, a YouTube id. To a text matcher, `bg-blue
+   text-white` and a sentence look identical — and typed over, the first one
+   silently loses a card its colour.
    ========================================================================== */
 
 /* Section headings and intros. These used to be typed straight into the JSX,
-   which meant a rebrand touched fourteen component files. They live here so
-   that restyling the template is two files: this one and app/brand.css.
+   which meant a rebrand touched fourteen component files.
 
    `titleAccent` is the trailing fragment that renders in the accent colour —
    the components split the heading rather than accepting markup, so no copy
    here is ever interpreted as HTML. */
-export const sections = {
-  trust: { title: 'What WE R ABLE stands for' }, // visually hidden
-  about: {
-    title: 'Everyone has the ability to live a fulfilling life.',
-    intro:
-      'WE R ABLE is a registered NDIS disability support provider committed to putting ' +
-      'participants first. We provide personalised support that promotes independence, ' +
-      'inclusion and choice, helping people with disability participate more fully in their ' +
-      'communities and everyday lives.',
-  },
-  values: { title: 'Our purpose, in plain words.' },
-  services: {
-    title: 'How We Can Support You',
-    intro: 'Nine NDIS supports, designed around individual needs, goals and everyday life.',
-  },
-  how: {
-    title: 'Support That Starts With',
-    titleAccent: 'You.',
-    intro:
-      'Your goals, choices and independence are at the heart of everything we do — from the ' +
-      'first conversation onwards.',
-  },
-  videos: {
-    title: 'Understanding the NDIS',
-    intro:
-      'Two short explainers published by the NDIA and the NDIS Quality and Safeguards ' +
-      'Commission, and a look at our own team at work.',
-  },
-  areas: {
-    title: 'Proudly Supporting Metro Melbourne',
-    intro:
-      'WE R ABLE supports participants across a growing number of suburbs and localities ' +
-      'throughout Melbourne.',
-  },
-  cta: {
-    title: 'Let’s Make A Difference Together.',
-    intro:
-      'Whether you’re looking for support for yourself or someone you care about, our team ' +
-      'is here to help.',
-  },
-  contact: {
-    title: 'Get in Touch',
-    intro:
-      'Tell us a little about what you need. We’ll get back to you and talk through how we ' +
-      'can help.',
-  },
-  facebook: {
-    title: 'Follow along on Facebook',
-    intro:
-      'Day-to-day updates from our team — activities, community outings and news — are ' +
-      'posted to our page.',
-  },
-} as const;
+export const sections = copy.sections;
 
+/* The hero, which used to be hardcoded in Hero.tsx — the largest type on the
+   page and the first thing anyone reads, so the least defensible thing to
+   leave uneditable. The <h1> is three fields because the markup breaks it
+   across a <br> and a coloured span; each fragment is its own text node,
+   which is what lets each be edited on its own. */
+export const hero = copy.hero;
+
+/* `phone.href` and `facebook` are link targets, not copy: they stay here so
+   the editor cannot point them somewhere else. */
 export const site = {
-  name: 'WE R ABLE',
-  tagline: 'We Are Able to Make A Difference.',
-  phone: { display: '0414 877 670', href: 'tel:+61414877670' },
-  email: 'werable.disability@gmail.com',
+  name: copy.site.name,
+  tagline: copy.site.tagline,
+  phone: { display: copy.site.phoneDisplay, href: 'tel:+61414877670' },
+  email: copy.site.email,
   facebook: 'https://www.facebook.com/werablecare/',
-  address: {
-    street: '21 Herring Loop',
-    locality: 'Caroline Springs',
-    region: 'VIC',
-    postcode: '3023',
-  },
-} as const;
+  address: copy.site.address,
+};
 
+/* Not in copy.json, and deliberately not editable. Each label renders three
+   times over — desktop bar, mobile drawer, footer Quick Links — and `href` is
+   load-bearing three ways: React key, anchor target, and the selector
+   `Header.tsx` hands to `document.querySelector` to drive scroll-spy. */
 export const nav = [
   { label: 'Home', href: '#home' },
   { label: 'About', href: '#about' },
@@ -88,63 +57,61 @@ export const nav = [
   { label: 'Contact', href: '#contact' },
 ] as const;
 
+/* --------------------------------------------------------------------------
+   Lists: copy.json holds the words, the arrays below hold everything else,
+   and the two are zipped by position. A length mismatch throws at module load
+   rather than rendering a row with holes in it.
+   ----------------------------------------------------------------------- */
+/**
+ * Narrow a name from copy.json back to IconName. The JSON import widens to
+ * `string`; a cast would hide exactly the failure that matters.
+ */
+function icon(value: string, where: string): IconName {
+  if (!isIconName(value)) throw new Error(`${where}: unknown icon "${value}"`);
+  return value;
+}
+
+function zip<S, C, R>(
+  structure: readonly S[],
+  words: readonly C[],
+  join: (s: S, c: C, i: number) => R,
+): R[] {
+  if (structure.length !== words.length) {
+    throw new Error(
+      `content: copy.json holds ${words.length} rows where the structure has ${structure.length}`,
+    );
+  }
+  return structure.map((s, i) => join(s, words[i], i));
+}
+
 export type Trust = { icon: IconName; title: string; body: string; tone: string };
 
-export const trust: Trust[] = [
-  {
-    icon: 'verified',
-    title: 'NDIS Registered',
-    body: 'Registered disability support provider.',
-    tone: 'text-blue',
-  },
-  {
-    icon: 'personHeart',
-    title: 'Participant First',
-    body: 'Support centred around individual needs.',
-    tone: 'text-magenta',
-  },
-  {
-    icon: 'handsHeart',
-    title: 'Compassionate Care',
-    body: 'Respectful and person-centred support.',
-    tone: 'text-gold-mid',
-  },
-  {
-    icon: 'pin',
-    title: 'Metro Melbourne',
-    body: 'Supporting participants across Melbourne.',
-    tone: 'text-ink',
-  },
-];
+const trustTones = ['text-blue', 'text-magenta', 'text-gold-mid', 'text-ink'];
+
+export const trust: Trust[] = zip(trustTones, copy.trust, (tone, c, i) => ({
+  icon: icon(c.icon, `trust[${i}]`),
+  title: c.title,
+  body: c.body,
+  tone,
+}));
 
 export type AbleLetter = { letter: string; word: string; body: string; chip: string };
 
-export const able: AbleLetter[] = [
-  {
-    letter: 'A',
-    word: 'Ability',
-    body: 'We start from what a person can do, not what they can’t.',
-    chip: 'bg-blue text-white',
-  },
-  {
-    letter: 'B',
-    word: 'Best',
-    body: 'Every shift, every visit, done properly.',
-    chip: 'bg-magenta text-white',
-  },
-  {
-    letter: 'L',
-    word: 'Love',
-    body: 'Warmth and patience, not a checklist.',
-    chip: 'bg-gold text-ink',
-  },
-  {
-    letter: 'E',
-    word: 'Empowering',
-    body: 'Building the confidence to take the lead.',
-    chip: 'bg-ink text-white',
-  },
+/* The letters are single characters inside aria-hidden spans, and double as
+   React keys. Too short to match on safely, and not prose. */
+const ableStructure = [
+  { letter: 'A', chip: 'bg-blue text-white' },
+  { letter: 'B', chip: 'bg-magenta text-white' },
+  { letter: 'L', chip: 'bg-gold text-ink' },
+  { letter: 'E', chip: 'bg-ink text-white' },
 ];
+
+export const able: AbleLetter[] = zip(ableStructure, copy.able, (s, c) => ({
+  letter: s.letter,
+  word: c.word,
+  body: c.body,
+  chip: s.chip,
+}));
 
 export type Pillar = {
   icon: IconName;
@@ -154,114 +121,55 @@ export type Pillar = {
   values?: string[];
 };
 
-export const pillars: Pillar[] = [
-  {
-    icon: 'flag',
-    label: 'Our Mission',
-    statement:
-      'To provide remarkable care that makes a meaningful difference in the lives of the people we support.',
-    accent: 'bg-blue text-blue',
-  },
-  {
-    icon: 'horizon',
-    label: 'Our Vision',
-    statement:
-      'A society where every person is valued, respected and empowered to reach their full potential.',
-    accent: 'bg-magenta text-magenta',
-  },
-  {
-    icon: 'heartCore',
-    label: 'Our Values',
-    statement: 'The four words behind our name.',
-    accent: 'bg-gold text-gold-mid',
-    values: ['Ability', 'Best', 'Love', 'Empowering'],
-  },
+/* `accent` is read as two classes — `Values.tsx` does `accent.split(' ')` — so
+   it must stay exactly two, which is reason enough to keep it out of a text
+   box. */
+const pillarStructure = [
+  { accent: 'bg-blue text-blue' },
+  { accent: 'bg-magenta text-magenta' },
+  { accent: 'bg-gold text-gold-mid' },
 ];
+
+export const pillars: Pillar[] = zip(pillarStructure, copy.pillars, (s, c, i) => ({
+  icon: icon(c.icon, `pillars[${i}]`),
+  label: c.label,
+  statement: c.statement,
+  accent: s.accent,
+}));
+
+/* "The four words behind our name" — so they are read from the name, rather
+   than written down a second time. They used to be a duplicate list, which
+   meant two content paths holding the identical four strings: the editor
+   would have bound one of each pair to the wrong section. */
+pillars[2].values = able.map((a) => a.word);
 
 export type Service = { icon: IconName; title: string; body: string };
 
-export const services: Service[] = [
-  {
-    icon: 'transport',
-    title: 'Travel & Transport',
-    body: 'Support to travel safely and access the places that matter to you.',
-  },
-  {
-    icon: 'sharedLiving',
-    title: 'Group & Shared Living',
-    body: 'Support with daily living in group or shared accommodation.',
-  },
-  {
-    icon: 'household',
-    title: 'Household Tasks',
-    body: 'Practical support to maintain a safe and comfortable home.',
-  },
-  {
-    icon: 'lifeSkills',
-    title: 'Daily Living & Life Skills',
-    body: 'Build confidence, independence and everyday living skills.',
-  },
-  {
-    icon: 'personal',
-    title: 'Personal Activities',
-    body: 'Personalised assistance with everyday personal care and activities.',
-  },
-  {
-    icon: 'highIntensity',
-    title: 'High-Intensity Personal Activities',
-    body: 'Specialised support for participants with more complex care needs.',
-  },
-  {
-    icon: 'nursing',
-    title: 'Community Nursing',
-    body: 'Professional nursing support delivered within the community.',
-  },
-  {
-    icon: 'community',
-    title: 'Community Participation',
-    body: 'Support to connect, participate and engage with the community.',
-  },
-  {
-    icon: 'activities',
-    title: 'Group & Centre-Based Activities',
-    body: 'Opportunities to learn, socialise and participate in meaningful activities.',
-  },
-];
+export const services: Service[] = copy.services.map((c, i) => ({
+  icon: icon(c.icon, `services[${i}]`),
+  title: c.title,
+  body: c.body,
+}));
 
 /* A real sequence — the order the support relationship actually unfolds in —
-   which is the only thing that earns numbered markers. */
+   which is the only thing that earns numbered markers. `n` is an aria-hidden
+   marker and a React key; `ink` is injected as a CSS custom property. */
 export type Step = { n: string; title: string; body: string; rule: string; ink: string };
 
-export const steps: Step[] = [
-  {
-    n: '01',
-    title: 'We Listen',
-    body: 'We take the time to understand your needs, preferences and goals.',
-    rule: 'bg-gold',
-    ink: 'var(--color-gold)',
-  },
-  {
-    n: '02',
-    title: 'We Respect',
-    body: 'Your choices, dignity and independence always come first.',
-    rule: 'bg-blue',
-    ink: 'var(--color-blue)',
-  },
-  {
-    n: '03',
-    title: 'We Empower',
-    body: 'We help you build confidence and develop greater independence.',
-    rule: 'bg-magenta',
-    ink: 'var(--color-magenta)',
-  },
-  {
-    n: '04',
-    title: 'We Care',
-    body: 'Our support is delivered with compassion, patience and genuine care.',
-    rule: 'bg-cream',
-    ink: 'var(--color-cream)',
-  },
+const stepStructure = [
+  { n: '01', rule: 'bg-gold', ink: 'var(--color-gold)' },
+  { n: '02', rule: 'bg-blue', ink: 'var(--color-blue)' },
+  { n: '03', rule: 'bg-magenta', ink: 'var(--color-magenta)' },
+  { n: '04', rule: 'bg-cream', ink: 'var(--color-cream)' },
 ];
+
+export const steps: Step[] = zip(stepStructure, copy.steps, (s, c) => ({
+  n: s.n,
+  title: c.title,
+  body: c.body,
+  rule: s.rule,
+  ink: s.ink,
+}));
 
 /* The live site publishes no suburb list — only "different suburbs and
    localities around Metro Melbourne" — so these are the metro groupings we
@@ -269,33 +177,21 @@ export const steps: Step[] = [
    `suburbs` array to any region and AreasServed renders it. */
 export type Region = { name: string; body: string; rule: string; suburbs?: string[] };
 
-export const regions: Region[] = [
-  {
-    name: 'Western Melbourne',
-    body: 'Our home base — Caroline Springs and the surrounding west.',
-    rule: 'bg-gold',
-  },
-  {
-    name: 'Northern Melbourne',
-    body: 'Suburbs and localities across Melbourne’s north.',
-    rule: 'bg-blue',
-  },
-  {
-    name: 'Inner & Eastern',
-    body: 'Inner Melbourne through to the eastern suburbs.',
-    rule: 'bg-magenta',
-  },
-  {
-    name: 'Other Metro Areas',
-    body: 'We’re steadily extending our reach across Greater Melbourne.',
-    rule: 'bg-ink',
-  },
-];
+const regionRules = ['bg-gold', 'bg-blue', 'bg-magenta', 'bg-ink'];
+
+export const regions: Region[] = zip(regionRules, copy.regions, (rule, c) => ({
+  name: c.name,
+  body: c.body,
+  rule,
+}));
 
 /* The first two are official NDIS resources published on the NDIA and
    Commission YouTube channels — credited as theirs, not presented as ours.
    The third is WE R ABLE's own reel. Thumbnails are hosted locally so no
-   third party is contacted before a visitor presses play. */
+   third party is contacted before a visitor presses play.
+
+   `id`, `kind` and `href` are the embed itself: the id goes straight into the
+   YouTube URL and `kind` chooses which player renders. */
 export type Video = {
   id: string;
   kind: 'youtube' | 'facebook';
@@ -307,49 +203,32 @@ export type Video = {
   thumb?: string;
 };
 
-export const videos: Video[] = [
-  {
-    id: 'OQWeTiFaheI',
-    kind: 'youtube',
-    title: 'Bringing the NDIS vision to life',
-    body: 'What the Scheme sets out to do, and what it means for participants day to day.',
-    credit: 'NDIS Australia',
-    source: 'YouTube',
-    href: 'https://youtu.be/OQWeTiFaheI',
-    thumb: '/assets/img/video-OQWeTiFaheI-960.webp',
-  },
+const videoStructure: Pick<Video, 'id' | 'kind' | 'href'>[] = [
+  { id: 'OQWeTiFaheI', kind: 'youtube', href: 'https://youtu.be/OQWeTiFaheI' },
   {
     id: 'nFIeHFazBuI',
     kind: 'youtube',
-    title: 'NDIS Code of Conduct',
-    body: 'The standards every registered provider — including us — is held to.',
-    credit: 'NDIS Quality and Safeguards Commission',
-    source: 'YouTube',
     href: 'https://www.youtube.com/watch?v=nFIeHFazBuI',
-    thumb: '/assets/img/video-nFIeHFazBuI-960.webp',
   },
   {
     id: 'reel-1193331752879761',
     kind: 'facebook',
-    title: 'From our team',
-    body: 'A recent update from the WE R ABLE team, posted to our Facebook page.',
-    credit: 'WE R ABLE',
-    source: 'Facebook',
     href: 'https://www.facebook.com/reel/1193331752879761/',
   },
 ];
 
-export const enquiryTopics = [
-  'Starting support with WE R ABLE',
-  'Travel & transport',
-  'Group or shared living',
-  'Household tasks',
-  'Daily living & life skills',
-  'Personal activities',
-  'High-intensity personal activities',
-  'Community nursing',
-  'Community participation',
-  'Group & centre-based activities',
-  'I’m a support coordinator',
-  'Something else',
-];
+export const videos: Video[] = zip(videoStructure, copy.videos, (s, c) => ({
+  ...s,
+  title: c.title,
+  body: c.body,
+  credit: c.credit,
+  source: c.source,
+  ...('thumb' in c && c.thumb ? { thumb: c.thumb } : {}),
+}));
+
+/* Rendered as <option> text and POSTed into the enquiry subject line. In
+   copy.json so the wording lives with the rest of it, but not offered to the
+   inline editor: a contentEditable span inside an <option> breaks the select.
+   The `{ text }` wrappers are what the editor's array walk needs to address a
+   row at all; unwrapped here so consumers still see string[]. */
+export const enquiryTopics: string[] = copy.enquiryTopics.map((row) => row.text);

@@ -1,0 +1,276 @@
+{
+  "site": {
+    "name": "WE R ABLE",
+    "tagline": "We Are Able to Make A Difference.",
+    "phoneDisplay": "0414 877 670",
+    "email": "werable.disability@gmail.com",
+    "address": {
+      "street": "21 Herring Loop",
+      "locality": "Caroline Springs",
+      "region": "VIC",
+      "postcode": "3023"
+    }
+  },
+  "sections": {
+    "trust": {
+      "title": "What WE R ABLE stands for"
+    },
+    "about": {
+      "title": "Everyone has the ability to live a fulfilling life.",
+      "intro": "WE R ABLE is a registered NDIS disability support provider committed to putting participants first. We provide personalised support that promotes independence, inclusion and choice, helping people with disability participate more fully in their communities and everyday lives."
+    },
+    "values": {
+      "title": "Our purpose, in plain words."
+    },
+    "services": {
+      "title": "How We Can Support You",
+      "intro": "Nine NDIS supports, designed around individual needs, goals and everyday life."
+    },
+    "how": {
+      "title": "Support That Starts With",
+      "titleAccent": "You.",
+      "intro": "Your goals, choices and independence are at the heart of everything we do — from the first conversation onwards."
+    },
+    "videos": {
+      "title": "Understanding the NDIS",
+      "intro": "Two short explainers published by the NDIA and the NDIS Quality and Safeguards Commission, and a look at our own team at work."
+    },
+    "areas": {
+      "title": "Proudly Supporting Metro Melbourne",
+      "intro": "WE R ABLE supports participants across a growing number of suburbs and localities throughout Melbourne."
+    },
+    "cta": {
+      "title": "Let’s Make A Difference Together.",
+      "intro": "Whether you’re looking for support for yourself or someone you care about, our team is here to help."
+    },
+    "contact": {
+      "title": "Get in Touch",
+      "intro": "Tell us a little about what you need. We’ll get back to you and talk through how we can help."
+    },
+    "facebook": {
+      "title": "Follow along on Facebook",
+      "intro": "Day-to-day updates from our team — activities, community outings and news — are posted to our page."
+    }
+  },
+  "hero": {
+    "eyebrow": "NDIS Registered Disability Support Provider",
+    "titleLine1": "We Are Able",
+    "titleLine2": "To Make A",
+    "titleAccent": "Difference.",
+    "lede": "Personalised support that empowers people with disability to live with greater independence, confidence and choice.",
+    "ctaPrimary": "Get in Touch",
+    "ctaSecondary": "Explore Our Services",
+    "badgeTitle": "Participant-first support",
+    "badgeWords": [
+      {
+        "text": "Care"
+      },
+      {
+        "text": "Respect"
+      },
+      {
+        "text": "Empowerment"
+      }
+    ]
+  },
+  "trust": [
+    {
+      "icon": "verified",
+      "title": "NDIS Registered",
+      "body": "Registered disability support provider."
+    },
+    {
+      "icon": "personHeart",
+      "title": "Participant First",
+      "body": "Support centred around individual needs."
+    },
+    {
+      "icon": "handsHeart",
+      "title": "Compassionate Care",
+      "body": "Respectful and person-centred support."
+    },
+    {
+      "icon": "pin",
+      "title": "Metro Melbourne",
+      "body": "Supporting participants across Melbourne."
+    }
+  ],
+  "able": [
+    {
+      "word": "Ability",
+      "body": "We start from what a person can do, not what they can’t."
+    },
+    {
+      "word": "Best",
+      "body": "Every shift, every visit, done properly."
+    },
+    {
+      "word": "Love",
+      "body": "Warmth and patience, not a checklist."
+    },
+    {
+      "word": "Empowering",
+      "body": "Building the confidence to take the lead."
+    }
+  ],
+  "pillars": [
+    {
+      "icon": "flag",
+      "label": "Our Mission",
+      "statement": "To provide remarkable care that makes a meaningful difference in the lives of the people we support."
+    },
+    {
+      "icon": "horizon",
+      "label": "Our Vision",
+      "statement": "A society where every person is valued, respected and empowered to reach their full potential."
+    },
+    {
+      "icon": "heartCore",
+      "label": "Our Values",
+      "statement": "The four words behind our name."
+    }
+  ],
+  "services": [
+    {
+      "icon": "transport",
+      "title": "Travel & Transport",
+      "body": "Support to travel safely and access the places that matter to you."
+    },
+    {
+      "icon": "sharedLiving",
+      "title": "Group & Shared Living",
+      "body": "Support with daily living in group or shared accommodation."
+    },
+    {
+      "icon": "household",
+      "title": "Household Tasks",
+      "body": "Practical support to maintain a safe and comfortable home."
+    },
+    {
+      "icon": "lifeSkills",
+      "title": "Daily Living & Life Skills",
+      "body": "Build confidence, independence and everyday living skills."
+    },
+    {
+      "icon": "personal",
+      "title": "Personal Activities",
+      "body": "Personalised assistance with everyday personal care and activities."
+    },
+    {
+      "icon": "highIntensity",
+      "title": "High-Intensity Personal Activities",
+      "body": "Specialised support for participants with more complex care needs."
+    },
+    {
+      "icon": "nursing",
+      "title": "Community Nursing",
+      "body": "Professional nursing support delivered within the community."
+    },
+    {
+      "icon": "community",
+      "title": "Community Participation",
+      "body": "Support to connect, participate and engage with the community."
+    },
+    {
+      "icon": "activities",
+      "title": "Group & Centre-Based Activities",
+      "body": "Opportunities to learn, socialise and participate in meaningful activities."
+    }
+  ],
+  "steps": [
+    {
+      "title": "We Listen",
+      "body": "We take the time to understand your needs, preferences and goals."
+    },
+    {
+      "title": "We Respect",
+      "body": "Your choices, dignity and independence always come first."
+    },
+    {
+      "title": "We Empower",
+      "body": "We help you build confidence and develop greater independence."
+    },
+    {
+      "title": "We Care",
+      "body": "Our support is delivered with compassion, patience and genuine care."
+    }
+  ],
+  "regions": [
+    {
+      "name": "Western Melbourne",
+      "body": "Our home base — Caroline Springs and the surrounding west."
+    },
+    {
+      "name": "Northern Melbourne",
+      "body": "Suburbs and localities across Melbourne’s north."
+    },
+    {
+      "name": "Inner & Eastern",
+      "body": "Inner Melbourne through to the eastern suburbs."
+    },
+    {
+      "name": "Other Metro Areas",
+      "body": "We’re steadily extending our reach across Greater Melbourne."
+    }
+  ],
+  "videos": [
+    {
+      "title": "Bringing the NDIS vision to life",
+      "body": "What the Scheme sets out to do, and what it means for participants day to day.",
+      "credit": "NDIS Australia",
+      "source": "YouTube",
+      "thumb": "/assets/img/video-OQWeTiFaheI-960.webp"
+    },
+    {
+      "title": "NDIS Code of Conduct",
+      "body": "The standards every registered provider — including us — is held to.",
+      "credit": "NDIS Quality and Safeguards Commission",
+      "source": "YouTube",
+      "thumb": "/assets/img/video-nFIeHFazBuI-960.webp"
+    },
+    {
+      "title": "From our team",
+      "body": "A recent update from the WE R ABLE team, posted to our Facebook page.",
+      "credit": "WE R ABLE",
+      "source": "Facebook"
+    }
+  ],
+  "enquiryTopics": [
+    {
+      "text": "Starting support with WE R ABLE"
+    },
+    {
+      "text": "Travel & transport"
+    },
+    {
+      "text": "Group or shared living"
+    },
+    {
+      "text": "Household tasks"
+    },
+    {
+      "text": "Daily living & life skills"
+    },
+    {
+      "text": "Personal activities"
+    },
+    {
+      "text": "High-intensity personal activities"
+    },
+    {
+      "text": "Community nursing"
+    },
+    {
+      "text": "Community participation"
+    },
+    {
+      "text": "Group & centre-based activities"
+    },
+    {
+      "text": "I’m a support coordinator"
+    },
+    {
+      "text": "Something else"
+    }
+  ]
+}
