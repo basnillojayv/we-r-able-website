@@ -32,10 +32,14 @@ const PUBLISH_POLL_MS = 5000
 
 type Publishing = { sha?: string; before: string | null; since: number }
 
-async function buildInfo(): Promise<{ sha: string | null; canPublish: boolean }> {
+async function buildInfo(): Promise<{
+  sha: string | null
+  canPublish: boolean
+  weakPassword: boolean
+}> {
   try {
     const response = await fetch('/api/build-info', { cache: 'no-store' })
-    if (!response.ok) return { sha: null, canPublish: true }
+    if (!response.ok) return { sha: null, canPublish: true, weakPassword: false }
     const body = await response.json()
     return {
       sha: body?.sha ?? null,
@@ -45,9 +49,10 @@ async function buildInfo(): Promise<{ sha: string | null; canPublish: boolean }>
        * something that works is its own kind of lie.
        */
       canPublish: body?.configured?.publishing !== false,
+      weakPassword: body?.configured?.passwordWeak === true,
     }
   } catch {
-    return { sha: null, canPublish: true }
+    return { sha: null, canPublish: true, weakPassword: false }
   }
 }
 
@@ -73,11 +78,15 @@ export function EditBar() {
    * Starts true so a working site never flashes a warning it will retract.
    */
   const [canPublish, setCanPublish] = useState(true)
+  /** A build-and-test password still in place. Standing, not dismissable. */
+  const [weakPassword, setWeakPassword] = useState(false)
 
   useEffect(() => {
     let cancelled = false
     void buildInfo().then((info) => {
-      if (!cancelled) setCanPublish(info.canPublish)
+      if (cancelled) return
+      setCanPublish(info.canPublish)
+      setWeakPassword(info.weakPassword)
     })
     return () => {
       cancelled = true
@@ -277,7 +286,10 @@ export function EditBar() {
           ? 'Saving…'
           : !canPublish
             ? 'Publishing is not configured: this site has no GITHUB_TOKEN, so changes cannot be saved yet.'
-            : status}
+            : (status ??
+              (weakPassword
+                ? 'Temporary password in use — replace it before handing this site over.'
+                : null))}
       </p>
     </div>
   )

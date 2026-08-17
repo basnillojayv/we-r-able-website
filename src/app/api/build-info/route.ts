@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { editingConfigured } from '@/lib/editorAuth'
+import { editingConfigured, passwordIsWeak } from '@/lib/editorAuth'
 import { editorBranch, editorRepoSource } from '@/lib/editorRepo'
 
 export const runtime = 'nodejs'
@@ -39,6 +39,9 @@ export function GET() {
       configured: {
         /** EDITOR_PASSWORD. The signing key is derived from it. */
         password: editingConfigured(),
+        /** A build-and-test password still in place. Not a secret to withhold:
+         *  anyone can already try one, and the point is that it gets noticed. */
+        passwordWeak: passwordIsWeak(),
         /** GITHUB_TOKEN. Without it the editor can edit but never save. */
         publishing: Boolean(process.env.GITHUB_TOKEN),
         /** 'vercel' means nothing had to be configured. */

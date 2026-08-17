@@ -196,6 +196,37 @@ export const cookieOptions = {
 }
 
 /**
+ * Passwords that are fine for building and dangerous for a client site.
+ *
+ * There is no rate limiting and cannot be, so a guessable password is the whole
+ * of the security. And since the cookie's signing key is derived from it, a weak
+ * password is also a weak signing key.
+ *
+ * This exists because "use something strong before handover" is the kind of
+ * intention that gets forgotten. Reported by /api/build-info and shown standing
+ * in the toolbar, so the site says it rather than someone having to remember.
+ */
+const OBVIOUS = new Set([
+  'letmein2o26',
+  'letmein',
+  'letmein2026',
+  'password',
+  'password123',
+  'admin',
+  'changeme',
+  'editor',
+  'test1234',
+  'secret',
+])
+
+/** Under 16 characters, or a password anyone would try first. */
+export function passwordIsWeak(): boolean {
+  const password = process.env.EDITOR_PASSWORD ?? ''
+  if (!password) return false // absent is reported separately, not as "weak"
+  return password.length < 16 || OBVIOUS.has(password.toLowerCase())
+}
+
+/**
  * One value, not two. The signing key comes from the password unless an
  * explicit EDITOR_SESSION_SECRET overrides it.
  */
