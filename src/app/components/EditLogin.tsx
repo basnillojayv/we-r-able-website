@@ -20,6 +20,8 @@ export function EditLogin() {
   const uid = useId()
   const formRef = useRef<HTMLFormElement>(null)
   const [state, setState] = useState<'checking' | 'idle' | 'signing-in'>('checking')
+  /** Whether saving can reach the live site — see the note in EditBar. */
+  const [canPublish, setCanPublish] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   const id = (name: string) => `${uid}-${name}`
@@ -50,6 +52,15 @@ export function EditLogin() {
       } catch {
         // Unreachable: fall through and show the form. A network that cannot
         // answer this question may still be able to carry a sign-in.
+      }
+
+      try {
+        const info = await fetch('/api/build-info', { cache: 'no-store' })
+        const body = info.ok ? await info.json() : null
+        if (!cancelled && body?.configured?.publishing === false) setCanPublish(false)
+      } catch {
+        // Leave the promise as written; a warning we cannot substantiate is
+        // worse than none.
       }
 
       if (!cancelled) setState('idle')
@@ -130,8 +141,17 @@ export function EditLogin() {
           and the site rebuilds. Promising "straight away" here would be the
           first thing the editor was caught lying about. */}
       <p className="edit-login__lede">
-        The homepage opens ready to edit. Click any heading or paragraph, type over it, and save —
-        your change publishes itself and reaches the live site about a minute later.
+        {canPublish ? (
+          <>
+            The homepage opens ready to edit. Click any heading or paragraph, type over it, and
+            save — your change publishes itself and reaches the live site about a minute later.
+          </>
+        ) : (
+          <>
+            The homepage opens ready to edit, but publishing is not configured on this site yet, so
+            changes cannot be saved. Ask your developer to finish the setup.
+          </>
+        )}
       </p>
 
       <form className="form" ref={formRef} onSubmit={onSubmit} noValidate>

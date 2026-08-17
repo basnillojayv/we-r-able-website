@@ -32,14 +32,27 @@ const PUBLISH_POLL_MS = 5000
 
 type Publishing = { sha?: string; before: string | null; since: number }
 
-async function builtFrom(): Promise<string | null> {
+async function buildInfo(): Promise<{ sha: string | null; canPublish: boolean }> {
   try {
     const response = await fetch('/api/build-info', { cache: 'no-store' })
-    if (!response.ok) return null
-    return (await response.json())?.sha ?? null
+    if (!response.ok) return { sha: null, canPublish: true }
+    const body = await response.json()
+    return {
+      sha: body?.sha ?? null,
+      /**
+       * Absent on an older deployment that predates the field. Treated as
+       * "probably fine" rather than "broken", because a false warning about
+       * something that works is its own kind of lie.
+       */
+      canPublish: body?.configured?.publishing !== false,
+    }
   } catch {
-    return null
+    return { sha: null, canPublish: true }
   }
+}
+
+async function builtFrom(): Promise<string | null> {
+  return (await buildInfo()).sha
 }
 export function EditBar() {
   const edit = useEdit()
@@ -48,6 +61,28 @@ export function EditBar() {
   const [status, setStatus] = useState<string | null>(null)
   const [signingOut, setSigningOut] = useState(false)
   const [publishing, setPublishing] = useState<Publishing | null>(null)
+  /**
+   * Whether a save can go anywhere.
+   *
+   * The token is the last thing installed and the easiest to forget, and until
+   * now the only way to find out it was missing was to do the work and press
+   * Save. An editor that cannot save has to say so before it is used, not
+   * after — otherwise someone forms an opinion about whether the tool works
+   * while looking at a configuration problem.
+   *
+   * Starts true so a working site never flashes a warning it will retract.
+   */
+  const [canPublish, setCanPublish] = useState(true)
+
+  useEffect(() => {
+    let cancelled = false
+    void buildInfo().then((info) => {
+      if (!cancelled) setCanPublish(info.canPublish)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   /**
    * Edits are held in memory until Save, so leaving the page would lose them
@@ -215,7 +250,8 @@ export function EditBar() {
       <button
         className="edit-bar__btn"
         onClick={onSave}
-        disabled={pending || dirtyCount === 0 || publishing !== null}
+        disabled={pending || dirtyCount === 0 || publishing !== null || !canPublish}
+        title={canPublish ? undefined : 'Publishing is not configured on this site'}
       >
         Save{dirtyCount > 0 ? ` (${dirtyCount})` : ''}
       </button>
@@ -237,7 +273,11 @@ export function EditBar() {
 
       {/* aria-live so the outcome reaches a screen reader, not only the eye. */}
       <p className="edit-bar__status" aria-live="polite">
-        {pending ? 'Saving…' : status}
+        {pending
+          ? 'Saving…'
+          : !canPublish
+            ? 'Publishing is not configured: this site has no GITHUB_TOKEN, so changes cannot be saved yet.'
+            : status}
       </p>
     </div>
   )
