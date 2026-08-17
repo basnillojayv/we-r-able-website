@@ -36,10 +36,12 @@ async function buildInfo(): Promise<{
   sha: string | null
   canPublish: boolean
   weakPassword: boolean
+  broadToken: boolean
 }> {
   try {
     const response = await fetch('/api/build-info', { cache: 'no-store' })
-    if (!response.ok) return { sha: null, canPublish: true, weakPassword: false }
+    if (!response.ok)
+      return { sha: null, canPublish: true, weakPassword: false, broadToken: false }
     const body = await response.json()
     return {
       sha: body?.sha ?? null,
@@ -50,9 +52,10 @@ async function buildInfo(): Promise<{
        */
       canPublish: body?.configured?.publishing !== false,
       weakPassword: body?.configured?.passwordWeak === true,
+      broadToken: body?.configured?.tokenBroad === true,
     }
   } catch {
-    return { sha: null, canPublish: true, weakPassword: false }
+    return { sha: null, canPublish: true, weakPassword: false, broadToken: false }
   }
 }
 
@@ -80,6 +83,8 @@ export function EditBar() {
   const [canPublish, setCanPublish] = useState(true)
   /** A build-and-test password still in place. Standing, not dismissable. */
   const [weakPassword, setWeakPassword] = useState(false)
+  /** A token wider than this site needs. Standing, like the password one. */
+  const [broadToken, setBroadToken] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -87,6 +92,7 @@ export function EditBar() {
       if (cancelled) return
       setCanPublish(info.canPublish)
       setWeakPassword(info.weakPassword)
+      setBroadToken(info.broadToken)
     })
     return () => {
       cancelled = true
@@ -157,6 +163,19 @@ export function EditBar() {
   if (!edit) return null
 
   const { editing, setEditing, pending: staged, dirtyCount, discard } = edit
+
+  /**
+   * Things that are working but should not be left as they are. Shown only
+   * when there is nothing more immediate to say, and never dismissable —
+   * the point is that they are still true.
+   */
+  const standingWarning =
+    [
+      weakPassword ? 'Temporary password in use' : null,
+      broadToken ? 'publishing key is wider than this site needs' : null,
+    ]
+      .filter(Boolean)
+      .join(', ') || null
 
   const onSave = () =>
     startTransition(async () => {
@@ -286,10 +305,7 @@ export function EditBar() {
           ? 'Saving…'
           : !canPublish
             ? 'Publishing is not configured: this site has no GITHUB_TOKEN, so changes cannot be saved yet.'
-            : (status ??
-              (weakPassword
-                ? 'Temporary password in use — replace it before handing this site over.'
-                : null))}
+            : (status ?? standingWarning)}
       </p>
     </div>
   )

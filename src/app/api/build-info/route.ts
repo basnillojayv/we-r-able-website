@@ -44,6 +44,18 @@ export function GET() {
         passwordWeak: passwordIsWeak(),
         /** GITHUB_TOKEN. Without it the editor can edit but never save. */
         publishing: Boolean(process.env.GITHUB_TOKEN),
+        /**
+         * A token that is not fine-grained.
+         *
+         * Fine-grained tokens begin `github_pat_`; an OAuth (`gho_`) or classic
+         * (`ghp_`) one does not, and carries far more than write access to one
+         * repository — commonly `repo`, `workflow` and `delete_repo` across
+         * every repository the account owns. Convenient to start with, wrong to
+         * leave sitting in a client site's environment.
+         */
+        tokenBroad:
+          Boolean(process.env.GITHUB_TOKEN) &&
+          !process.env.GITHUB_TOKEN!.startsWith('github_pat_'),
         /** 'vercel' means nothing had to be configured. */
         repo: editorRepoSource(),
         branch: editorBranch(),
