@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useCallback, useContext, useMemo, useState } from 'react'
-import type { Edit } from '../actions/inlineEdit'
+import type { Edit } from '@/lib/editTypes'
 
 /**
  * Holds the editing session: whether edit mode is on, and what has been changed

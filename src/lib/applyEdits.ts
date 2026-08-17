@@ -4,7 +4,8 @@ import { contentSchema } from '@/lib/contentSchema'
 import { MEDIA_BY_ID, idForPath } from '@/lib/media'
 import { isUploadablePath } from '@/lib/uploads'
 
-export type Edit = { key: string; value: string | number }
+import type { Edit } from '@/lib/editTypes'
+export type { Edit }
 
 /** `media.<numeric id>.alt`, the one key format the client invents itself. */
 const MEDIA_ALT = /^media\.(\d+)\.alt$/

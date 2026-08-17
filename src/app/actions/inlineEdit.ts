@@ -1,10 +1,9 @@
 'use server'
 
 import { getEditor } from '@/lib/editorAuth'
-import { applyEdits, type Edit } from '@/lib/applyEdits'
+import { applyEdits } from '@/lib/applyEdits'
 import { editorBranch, editorRepo } from '@/lib/editorRepo'
-
-export type { Edit }
+import type { Edit } from '@/lib/editTypes'
 
 type Result = { ok: true; count: number; sha?: string } | { ok: false; error: string }
 
